@@ -1,8 +1,15 @@
+import { directive as onClickaway } from 'vue-clickaway'
+import { ValidationObserver, ValidationProvider } from 'vee-validate'
 import user from '@/mixins/user'
 import { mapActions, mapGetters } from 'vuex'
 
 export default {
   mixins: [user],
+  middleware: 'auth',
+  components: {
+    ValidationObserver,
+    ValidationProvider
+  },
   data () {
     return {
       customer: null,
@@ -14,8 +21,73 @@ export default {
       customers: [],
       projectManagers: [],
       internalBuyers: [],
-      buyingLeads: []
+      buyingLeads: [],
+      showDecadeNav: false,
+      hideHeader: true,
+      filterSection: false,
+      totalRows: 1,
+      currentPage: 1,
+      perPage: 25,
+      pageOptions: [10, 25, 50],
+      sortBy: '',
+      sortDesc: false,
+      sortDirection: 'asc',
+      filter: '',
+      filterOn: [],
+      bgInfo: true,
+      bgSuccess: false,
+      bgprimary: false,
+      countlist: [],
+      fields: [{
+        key: 'id',
+        label: 'Order no.',
+        sortable: true
+      },
+      {
+        key: 'user',
+        label: 'Customer',
+        sortable: true
+      },
+      {
+        key: 'manager',
+        label: 'Project Manager',
+        sortable: true
+      },
+      {
+        key: 'buying_lead',
+        label: 'Buying Lead',
+        sortable: true
+      },
+      {
+        key: 'address',
+        label: 'Delivery Location',
+        sortable: true
+      },
+      {
+        key: 'internal_buyer',
+        label: 'Internal Buyer',
+        sortable: true
+      },
+      {
+        key: 'created_at',
+        label: 'Order Date',
+        sortable: true
+      },
+      {
+        key: 'status',
+        label: 'Status',
+        sortable: false
+      },
+      { key: 'actions', label: 'Actions' }
+      ],
+      orders: []
     }
+  },
+  /**
+   *click awy directives
+    */
+  directives: {
+    onClickaway: onClickaway
   },
   computed: {
     ...mapGetters('analytic', [
@@ -31,64 +103,37 @@ export default {
       'slsOrders',
       'completedOrders',
       'pendingOrders'
-    ])
-    // successfullOrders () {
-    //   return this.analyticOrders.map(order => {
-    //     return order.status === 'successful' ? order : null
-    //   }).filter(order => order)
-    // },
-    // slsOrders () {
-    //   return this.analyticOrders.map(order => {
-    //     return order.status === 'sls' ? order : null
-    //   }).filter(order => order)
-    // },
-    // completedOrders () {
-    //   return this.analyticOrders.map(order => {
-    //     return order.status === 'completed' ? order : null
-    //   }).filter(order => order)
-    // },
-    // pendingOrders () {
-    //   return this.analyticOrders.map(order => {
-    //     return order.status === 'pending' ? order : null
-    //   }).filter(order => order)
-    // }
+    ]),
+    statusConnt () {
+      return this.count(this.orders)
+    },
+    rows () {
+      return this.orders.length
+    },
+    sortOptions () {
+      // Create an options list from our fields
+      return this.fielast_namelds
+        .filter(f => f.sortable)
+        .map(f => {
+          return {
+            text: f.label,
+            value: f.key
+          }
+        })
+    }
   },
   watch: {
     customer () {
-      let option = {
-        'customer': this.customer,
-        'projectManager': this.projectManager,
-        'buyingLead': this.buyingLead,
-        'internalBuyer': this.internalBuyer
-      }
-      this.setAdvancedOptions(this.orders, option)
+      this.setAdvancedOptions(this.orders, this.getAdvancedFormOptions())
     },
     projectManager () {
-      let option = {
-        'customer': this.customer,
-        'projectManager': this.projectManager,
-        'buyingLead': this.buyingLead,
-        'internalBuyer': this.internalBuyer
-      }
-      this.setAdvancedOptions(this.orders, option)
+      this.setAdvancedOptions(this.orders, this.getAdvancedFormOptions())
     },
     buyingLead () {
-      let option = {
-        'customer': this.customer,
-        'projectManager': this.projectManager,
-        'buyingLead': this.buyingLead,
-        'internalBuyer': this.internalBuyer
-      }
-      this.setAdvancedOptions(this.orders, option)
+      this.setAdvancedOptions(this.orders, this.getAdvancedFormOptions())
     },
     internalBuyer () {
-      let option = {
-        'customer': this.customer,
-        'projectManager': this.projectManager,
-        'buyingLead': this.buyingLead,
-        'internalBuyer': this.internalBuyer
-      }
-      this.setAdvancedOptions(this.orders, option)
+      this.setAdvancedOptions(this.orders, this.getAdvancedFormOptions())
     }
   },
   methods: {
@@ -100,119 +145,28 @@ export default {
       'setUnavailableOrdersByMonth',
       'setInternalBuyerOrdersByMonth',
       'setUnavailableProducts',
+      'setOrdersByStatus',
       'setSuccessfulOrders',
       'setSlsOrders',
       'setCompletedOrders',
       'setPendingOrders'
     ]),
-    async setAdvancedOptions (orders = [], option = {}) {
-      let {customers, managers, buyingLeads, internalBuyers} = await this.getFilterOptions(this.orders, option)
-      this.customers = customers
-      this.projectManagers = managers
-      this.buyingLeads = buyingLeads
-      this.internalBuyers = internalBuyers
-    },
-    async getFilterOptions (orders = [], options = {}) {
-      if (this.user) {
-        let addresses = []
-        let customers = []
-        let managers = []
-        let buyingLeads = []
-        let internalBuyers = []
-
-        if (options.customer) {
-          orders = orders.filter(order => {
-            return order.user.id === options.customer ? order : null
-          })
-        }
-
-        if (options.projectManager) {
-          orders = orders.filter(order => {
-            return order.manager_id === options.projectManager ? order : null
-          })
-        }
-
-        if (options.buyingLead) {
-          orders = orders.filter(order => {
-            return order.buying_lead_id === options.buyingLead ? order : null
-          })
-        }
-
-        if (options.internalBuyer) {
-          orders = orders.filter(order => {
-            return order.internal_buyer_id === options.internalBuyer ? order : null
-          })
-        }
-
-        orders.forEach(order => {
-          if (order.address) {
-            addresses.push({
-              value: order.address.id,
-              text: order.address.line1
-            })
-          }
-          if (order.user) {
-            customers.push({
-              value: order.user.id,
-              text: order.user.fname + ' ' + order.user.lname
-            })
-          }
-          if (order.manager) {
-            managers.push({
-              value: order.manager.id,
-              text: order.manager.fname + ' ' + order.manager.lname
-            })
-          }
-          if (order.buying_lead) {
-            buyingLeads.push({
-              value: order.buying_lead.id,
-              text: order.buying_lead.fname + ' ' + order.buying_lead.lname
-            })
-          }
-          if (order.internal_buyer) {
-            internalBuyers.push({
-              value: order.internal_buyer.id,
-              text: order.internal_buyer.fname + ' ' + order.internal_buyer.lname
-            })
-          }
-        })
-
-        addresses = addresses.map(item => item['value'])
-          .map((item, index, final) => final.indexOf(item) === index && index)
-          .filter(item => addresses[item])
-          .map(item => addresses[item])
-        customers = customers.map(item => item['value'])
-          .map((item, index, final) => final.indexOf(item) === index && index)
-          .filter(item => customers[item])
-          .map(item => customers[item])
-        managers = managers.map(item => item['value'])
-          .map((item, index, final) => final.indexOf(item) === index && index)
-          .filter(item => managers[item])
-          .map(item => managers[item])
-        buyingLeads = buyingLeads.map(item => item['value'])
-          .map((item, index, final) => final.indexOf(item) === index && index)
-          .filter(item => buyingLeads[item])
-          .map(item => buyingLeads[item])
-        internalBuyers = internalBuyers.map(item => item['value'])
-          .map((item, index, final) => final.indexOf(item) === index && index)
-          .filter(item => internalBuyers[item])
-          .map(item => internalBuyers[item])
-
-        return {
-          addresses,
-          customers,
-          managers,
-          buyingLeads,
-          internalBuyers
-        }
+    fetchOrders (option = {}) {
+      let status = this.type
+      this.setOrdersByStatus({status, option})
+      switch (status) {
+        case 'successful':
+          this.orders = this.successfulOrders
+          break
+        case 'sls':
+          this.orders = this.slsOrders
+          break
+        case 'completed':
+          this.orders = this.completedOrders
+          break
       }
-      return {
-        addresses: [],
-        customers: [],
-        managers: [],
-        buyingLeads: [],
-        internalBuyers: []
-      }
+
+      this.setAdvancedOptions(this.orders, option)
     },
     /**
      * filter Reset
@@ -226,9 +180,56 @@ export default {
       this.from = null
       this.to = null
       this.setAdvancedOptions(this.orders, {})
-      this.fetchSuccessfullOrders()
+      this.fetchOrders()
       this.$nextTick(() => {})
+    },
+    /**
+     *click away method
+     */
+    sortfilter () {
+      this.filterSection = false
+    },
+    /**
+     *click away filtersearch
+     */
+    filterSearch () {
+      this.filterSection = !this.filterSection
+    },
+    count (array) {
+      let counts = array.reduce((out, {
+        status
+      }) => ({
+        ...out,
+        [status]: out[status] + 1 || 1
+      }), {})
+      return Object.keys(counts).map(key => ({
+        status: key,
+        count: counts[key]
+      }))
+    },
+    onFiltered (filteredItems) {
+      // Trigger pagination to update the number of buttons/pages due to filtering
+      this.totalRows = filteredItems.length
+      this.currentPage = 1
+    },
+    /**
+     *filter Submit
+     */
+    onSubmit (evt) {
+      evt.preventDefault()
+      this.fetchOrders(this.getAdvancedFormOptions())
+      console.log(JSON.stringify(this.form))
+      // this.filterSection = false
+    },
+    getAdvancedFormOptions () {
+      return {
+        'customer': this.customer,
+        'projectManager': this.projectManager,
+        'buyingLead': this.buyingLead,
+        'internalBuyer': this.internalBuyer,
+        'from': this.from,
+        'to': this.to
+      }
     }
-
   }
 }

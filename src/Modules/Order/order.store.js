@@ -60,6 +60,8 @@ const actions = {
     let isCustomer = rootGetters['user/isCustomer']
     let orders = []
 
+    console.log(option)
+
     if (user) {
       Order.insert({data: JSON.parse(localStorage.getItem('orders'))})
       OrderDetails.insert({data: JSON.parse(localStorage.getItem('orderDetails'))})
@@ -86,7 +88,7 @@ const actions = {
       if (option.customer) {
         query.where('user_id', option.customer)
       }
-      if (option.manager) {
+      if (option.projectManager) {
         query.where('manager_id', option.manager)
       }
       if (option.buyingLead) {

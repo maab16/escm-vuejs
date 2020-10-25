@@ -244,7 +244,7 @@ export default {
     onClickaway: onClickaway
   },
   mounted () {
-    this.fetchSuccessfullOrders()
+    this.fetchUnavailableOrders()
     // Set the initial number of orders
     this.totalRows = this.orders.length
   },
@@ -268,7 +268,7 @@ export default {
     }
   },
   methods: {
-    fetchSuccessfullOrders (option = {}) {
+    fetchUnavailableOrders (option = {}) {
       this.setPendingOrders(option)
       this.orders = this.pendingOrders.map(request => {
         request.customer = request.order.user.organization
@@ -312,11 +312,26 @@ export default {
       this.currentPage = 1
     },
     /**
+     * filter Reset
+     */
+    onReset (evt) {
+      evt.preventDefault()
+      this.customer = null
+      this.projectManager = null
+      this.buyingLead = null
+      this.internalBuyer = null
+      this.from = null
+      this.to = null
+      this.setAdvancedOptions(this.orders, {})
+      this.fetchUnavailableOrders()
+      this.$nextTick(() => {})
+    },
+    /**
      *filter Submit
      */
     onSubmit (evt) {
       evt.preventDefault()
-      this.fetchSuccessfullOrders({
+      this.fetchUnavailableOrders({
         'customer': this.customer,
         'projectManager': this.projectManager,
         'buyingLead': this.buyingLead,

@@ -11,20 +11,18 @@ export default {
   },
   data () {
     return {
-      form: {
-        address: null,
-        customer: null,
-        manager: null,
-        buyingLead: null,
-        internalBuyer: null,
-        from: '',
-        to: ''
-      },
-      Address: ['Dr.reddy’s', 'Cipla', 'Hetro Labs'],
-      Customer: ['Dr.reddy’s', 'Cipla', 'Hetro Labs'],
-      Pmanager: ['Rakesh A', 'Arun Kumar'],
-      Buying: ['Sudhakar Reddy', 'varun', 'ashok'],
-      Internal: ['sudhakar Reddy', 'arjun'],
+      address: null,
+      customer: null,
+      projectManager: null,
+      buyingLead: null,
+      internalBuyer: null,
+      from: '',
+      to: '',
+      addresses: [],
+      customers: [],
+      projectManagers: [],
+      internalBuyers: [],
+      buyingLeads: [],
       showDecadeNav: false,
       hideHeader: true,
       filterSection: false,
@@ -64,7 +62,7 @@ export default {
           label: ''
         },
         {
-          key: 'actions', 
+          key: 'actions',
           label: 'Actions'
         }
       ],
@@ -114,7 +112,7 @@ export default {
           label: ''
         },
         {
-          key: 'actions', 
+          key: 'actions',
           label: 'Actions'
         }
       ],
@@ -197,8 +195,25 @@ export default {
       return statusData
     }
   },
+  watch: {
+    address () {
+      this.setAdvancedOptions(this.orders, this.getOptions())
+    },
+    customer () {
+      this.setAdvancedOptions(this.orders, this.getOptions())
+    },
+    projectManager () {
+      this.setAdvancedOptions(this.orders, this.getOptions())
+    },
+    buyingLead () {
+      this.setAdvancedOptions(this.orders, this.getOptions())
+    },
+    internalBuyer () {
+      this.setAdvancedOptions(this.orders, this.getOptions())
+    }
+  },
   mounted () {
-    this.fetchOrderList(this.form)
+    this.fetchOrderList(this.getOptions())
     console.log(this.orders)
   },
   methods: {
@@ -226,12 +241,14 @@ export default {
      */
     onReset (evt) {
       evt.preventDefault()
-      this.form.Customer = null
-      this.form.Pmanager = null
-      this.form.Buying = null
-      this.form.Internal = null
-      this.form.from = null
-      this.form.to = null
+      this.customer = null
+      this.projectManager = null
+      this.buyingLead = null
+      this.internalBuyer = null
+      this.from = null
+      this.to = null
+      this.setAdvancedOptions(this.orders, {})
+      this.fetchOrderList(this.getOptions())
       this.$nextTick(() => {})
     },
     /**
@@ -239,16 +256,7 @@ export default {
      */
     async onSubmit (evt) {
       evt.preventDefault()
-      // this.filterOrderlist()
-      // this.filterOrders({
-      //   customer_id: this.form.customer ? this.form.customer : null,
-      //   manager_id: this.form.manager ? this.form.manager : null,
-      //   buying_lead_id: this.form.buying_lead ? this.form.buying_lead : null,
-      //   internal_buyer_id: this.form.internal_buyer ? this.form.internal_buyer : null,
-      //   from: this.form.from ? this.format(this.form.from) : null,
-      //   to: this.form.to ? this.format(this.form.to) : null
-      // })
-      await this.setOrders(this.form)
+      await this.setOrders(this.getOptions())
       this.ordersList = this.orders.map(order => {
         order.meta = {
           id: order.id
@@ -260,6 +268,17 @@ export default {
     orderDetail (res) {
       console.log(res)
       this.$router.push({name: 'order-detail', params: { id: res }})
+    },
+    getOptions () {
+      return {
+        'address': this.address,
+        'customer': this.customer,
+        'projectManager': this.projectManager,
+        'buyingLead': this.buyingLead,
+        'internalBuyer': this.internalBuyer,
+        'from': this.from,
+        'to': this.to
+      }
     }
   }
 }

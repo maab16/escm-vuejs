@@ -92,9 +92,9 @@
                 <b-form-group id="input-group-2" label="Delivery Location :" label-for="input-2">
                   <b-form-select
                     :searchable="false"
-                    v-model="form.address"
+                    v-model="address"
                     placeholder="Select Delivery Location"
-                    :options="Address"
+                    :options="addresses"
                   >
                     <template #open-indicator="{ attributes }">
                       <span v-bind="attributes">
@@ -108,9 +108,9 @@
                 <b-form-group id="input-group-3" label="Customer :" label-for="input-3">
                   <b-form-select
                     :searchable="false"
-                    v-model="form.customer"
+                    v-model="customer"
                     placeholder="Select Customer"
-                    :options="Customer"
+                    :options="customers"
                   >
                     <template #open-indicator="{ attributes }">
                       <span v-bind="attributes">
@@ -124,9 +124,9 @@
                 <b-form-group id="input-group-4" label="Project Manager :" label-for="input-4">
                   <b-form-select
                     :searchable="false"
-                    v-model="form.manager"
+                    v-model="projectManager"
                     placeholder="Select Project Manager"
-                    :options="Pmanager"
+                    :options="projectManagers"
                   >
                     <template #open-indicator="{ attributes }">
                       <span v-bind="attributes">
@@ -140,9 +140,9 @@
                 <b-form-group id="input-group-5" label="Buying Lead :" label-for="input-5">
                   <b-form-select
                     :searchable="false"
-                    v-model="form.buyingLead"
+                    v-model="buyingLead"
                     placeholder="Select Buying Lead"
-                    :options="Buying"
+                    :options="buyingLeads"
                   >
                     <template #open-indicator="{ attributes }">
                       <span v-bind="attributes">
@@ -156,9 +156,9 @@
                 <b-form-group id="input-group-6" label="Internal Buyer :" label-for="input-6">
                   <b-form-select
                     :searchable="false"
-                    v-model="form.internalBuyer"
+                    v-model="internalBuyer"
                     placeholder="Select Internal Buyer"
-                    :options="Internal"
+                    :options="internalBuyers"
                   >
                     <template #open-indicator="{ attributes }">
                       <span v-bind="attributes">
@@ -175,7 +175,7 @@
                     id="datepicker-dateformat2"
                     :date-format-options="{ year: 'numeric', month: 'numeric', day: 'numeric' }"
                     locale="en"
-                    v-model="form.from"
+                    v-model="from"
                     :hide-header="true"
                   ></b-form-datepicker>
                 </div>
@@ -187,7 +187,7 @@
                     id="datepicker-dateformat3"
                     :date-format-options="{ year: 'numeric', month: 'numeric', day: 'numeric' }"
                     locale="en"
-                    v-model="form.to"
+                    v-model="to"
                     :hide-header="true"
                   ></b-form-datepicker>
                 </div>

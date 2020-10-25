@@ -302,6 +302,8 @@ const actions = {
     commit(types.SET_UNAVAILABLE_PRODUCTS, requests)
   },
   async setOrdersByStatus ({commit, rootGetters}, {status, option}) {
+    console.log(status)
+    console.log(option)
     let loggedUser = rootGetters['user/user']
     let isManager = rootGetters['user/isManager']
     let isBuyingLead = rootGetters['user/isBuyingLead']
@@ -339,7 +341,9 @@ const actions = {
       }
 
       let orders = query.where('status', status).get()
+      console.log(orders)
       let setter = 'SET_' + status.trim().toUpperCase() + '_ORDERS'
+      console.log(setter)
       commit(types[setter], orders)
     }
   },
