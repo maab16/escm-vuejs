@@ -1,10 +1,11 @@
 import { directive as onClickaway } from 'vue-clickaway'
 import { ValidationObserver, ValidationProvider } from 'vee-validate'
 import user from '@/mixins/user'
+import fields from '@/mixins/table-fields'
 import { mapActions, mapGetters } from 'vuex'
 
 export default {
-  mixins: [user],
+  mixins: [user, fields],
   middleware: 'auth',
   components: {
     ValidationObserver,
@@ -38,48 +39,6 @@ export default {
       bgSuccess: false,
       bgprimary: false,
       countlist: [],
-      fields: [{
-        key: 'id',
-        label: 'Order no.',
-        sortable: true
-      },
-      {
-        key: 'user',
-        label: 'Customer',
-        sortable: true
-      },
-      {
-        key: 'manager',
-        label: 'Project Manager',
-        sortable: true
-      },
-      {
-        key: 'buying_lead',
-        label: 'Buying Lead',
-        sortable: true
-      },
-      {
-        key: 'address',
-        label: 'Delivery Location',
-        sortable: true
-      },
-      {
-        key: 'internal_buyer',
-        label: 'Internal Buyer',
-        sortable: true
-      },
-      {
-        key: 'created_at',
-        label: 'Order Date',
-        sortable: true
-      },
-      {
-        key: 'status',
-        label: 'Status',
-        sortable: false
-      },
-      { key: 'actions', label: 'Actions' }
-      ],
       orders: []
     }
   },

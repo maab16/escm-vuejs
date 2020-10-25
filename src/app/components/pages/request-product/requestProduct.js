@@ -5,9 +5,11 @@ import {
   ValidationObserver,
   ValidationProvider
 } from 'vee-validate'
+import requestFields from '@/mixins/request-table-fields'
 import { mapActions, mapGetters } from 'vuex'
 export default {
   middleware: 'auth',
+  extends: requestFields,
   components: {
     ValidationObserver,
     ValidationProvider
@@ -38,57 +40,6 @@ export default {
       bgSuccess: false,
       bgprimary: false,
       countlist: [],
-      fielast_namelds: [{
-        key: 'cas',
-        label: 'CAS No.',
-        sortable: true
-      },
-      {
-        key: 'product',
-        label: 'Product Name',
-        sortable: true
-      },
-      {
-        key: 'qty',
-        label: 'Quantity',
-        sortable: true
-      },
-      {
-        key: 'user',
-        label: 'Customer',
-        sortable: true
-      },
-      {
-        key: 'requested',
-        label: 'Requested By',
-        sortable: true
-      },
-      {
-        key: 'internal',
-        label: 'Internal Buyer',
-        sortable: true
-      },
-      {
-        key: 'order_id',
-        label: 'Related Order ID.',
-        sortable: true
-      },
-      {
-        key: 'delivery_at',
-        label: 'Delivery Date',
-        sortable: true
-      },
-      {
-        key: 'created_at',
-        label: 'Order Date',
-        sortable: true
-      },
-      {
-        key: 'actions',
-        label: 'Actions',
-        sortable: true
-      }
-      ],
       Customer: ['Dr.reddy’s', 'Cipla', 'Hetro Labs'],
       Pmanager: ['Rakesh A', 'Arun Kumar'],
       Buying: ['Sudhakar Reddy', 'varun', 'ashok'],

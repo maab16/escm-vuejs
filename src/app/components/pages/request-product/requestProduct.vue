@@ -146,7 +146,7 @@
               :sort-direction="sortDirection"
               @filtered="onFiltered"
               :items="orders"
-              :fields="fielast_namelds"
+              :fields="fields"
             >
               <template v-slot:cell(cas)="data">
                 <p class="d-none d-lg-block d-md-block d-xl-block">{{ data.value }}</p>
