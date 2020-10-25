@@ -1,7 +1,7 @@
 /* eslint no-shadow: ["error", { "allow": ["state"] }] */
 
-import Supplier from '@/Modules/Supplier/supplier.model'
-import * as types from './mutation-types'
+// import Supplier from '@/Modules/Supplier/supplier.model'
+// import * as types from './mutation-types'
 
 const stateData = {}
 

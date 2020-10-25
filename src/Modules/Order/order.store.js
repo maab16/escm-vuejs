@@ -54,8 +54,6 @@ const mutations = {
 const actions = {
   setOrders ({commit, rootGetters}, option) {
     let user = rootGetters['user/user']
-    let isAdmin = rootGetters['user/isAdmin']
-    let isSupplierManager = rootGetters['user/isSupplierManager']
     let isManager = rootGetters['user/isManager']
     let isBuyingLead = rootGetters['user/isBuyingLead']
     let isInternalBuyer = rootGetters['user/isInternalBuyer']
@@ -67,8 +65,7 @@ const actions = {
       OrderDetails.insert({data: JSON.parse(localStorage.getItem('orderDetails'))})
       let query = Order.query().withAllRecursive()
       let userKey = ''
-      if (isAdmin || isSupplierManager) {
-      } else if (isManager) {
+      if (isManager) {
         userKey = 'manager_id'
       } else if (isBuyingLead) {
         userKey = 'buying_lead_id'
@@ -225,8 +222,6 @@ const actions = {
   },
   async setRecentOrders ({commit, rootGetters}) {
     let user = rootGetters['user/user']
-    let isAdmin = rootGetters['user/isAdmin']
-    let isSupplierManager = rootGetters['user/isSupplierManager']
     let isManager = rootGetters['user/isManager']
     let isBuyingLead = rootGetters['user/isBuyingLead']
     let isInternalBuyer = rootGetters['user/isInternalBuyer']
@@ -238,8 +233,7 @@ const actions = {
       let orders = []
       let userKey = ''
       let query = Order.query().withAllRecursive()
-      if (isAdmin || isSupplierManager) {
-      } else if (isManager) {
+      if (isManager) {
         userKey = 'manager_id'
       } else if (isBuyingLead) {
         userKey = 'buying_lead_id'

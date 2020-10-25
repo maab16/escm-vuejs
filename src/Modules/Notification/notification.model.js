@@ -4,7 +4,7 @@ import moment from 'moment'
 
 const date = moment().format('YYYY-MM-DD HH:mm:ss')
 
-class Test extends Model {
+class Notification extends Model {
   static fields () {
     return {
       id: this.uid(),
@@ -17,6 +17,6 @@ class Test extends Model {
   }
 }
 
-Test.entity = 'tests'
+Notification.entity = 'notifications'
 
-export default Test
+export default Notification
