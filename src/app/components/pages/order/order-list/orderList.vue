@@ -225,7 +225,6 @@
               <template v-slot:cell(id)="data">
                 <a class="d-none d-lg-block d-md-block d-xl-block fs-16" href="javascript:void(0)">
                   <router-link class="dropdown-item" :to="{name: 'order-detail', params: {id: data.value}}">{{ data.value }}</router-link>
-                  <!-- <a href="javascript:void(0)" @click="orderDetail(data.value)">{{ data.value }}</a> -->
                 </a>
               </template>
               <template v-slot:cell(user)="data">
@@ -262,21 +261,21 @@
                 <div class="d-none d-lg-block d-md-block d-xl-block">
                   <div class="status-icons d-flex justify-content-between">
                     <div v-if="data.value === 'successful'" class="status-order">
-                      <P>
+                      <p>
                         <span class="status bg-info"></span>Successful
-                      </P>
+                      </p>
                     </div>
                     <div v-if="data.value==='completed'" class="status-order">
-                      <P>
+                      <p>
                         <span class="status bg-success"></span>
                         Completed
-                      </P>
+                      </p>
                     </div>
                     <div v-if="data.value==='sls'" class="status-order">
-                      <P>
+                      <p>
                         <span class="status bg-primary"></span>
                         Placed with SLS
-                      </P>
+                      </p>
                     </div>
                   </div>
                 </div>

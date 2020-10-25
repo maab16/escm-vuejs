@@ -12,9 +12,6 @@
               <img src="~@/assets/images/icons/refresh.svg" alt="refresh" />
             </a>
           </p>
-          <!-- <a href="javascript:void(0)" class="pl-20 pt-s5">
-              <img src="~@/assets/images/icons/refresh.svg" alt="refresh" />
-          </a> -->
         </div>
         <div class="sort-filter d-flex align-items-center">
           <div class="pr-20 d-flex align-items-center">

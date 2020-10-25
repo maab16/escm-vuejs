@@ -1,7 +1,5 @@
 import { directive as onClickaway } from 'vue-clickaway'
 import { ValidationObserver, ValidationProvider } from 'vee-validate'
-import OrderDataService from '../../../../services/orderService.js'
-import { mapActions, mapGetters } from 'vuex'
 import orderMixin from '@/mixins/order'
 
 export default {

@@ -194,32 +194,6 @@
                   </b-dropdown>
                 </div>
               </template>
-              <!-- <template v-slot:cell(actions)="row">
-                <b-card class="d-block d-md-none d-lg-none">
-                  <router-link to="/order/order-detail/1000123456716">
-                    <div v-for="(list, key) in row" :key="key">
-                      <div class="d-flex align-items-center justify-content-between">
-                        <div class>
-                          <a
-                            class="pb-10"
-                            :href="'/order/order-detail/1000123456716'"
-                          >{{ list.Related }}</a>
-                          <p class="fw-500">{{list.CAS}}</p>
-                          <p class="fw-500">{{list.Customer}}</p>
-                        </div>
-                        <div class="status-mobile">
-                          <p v-if="list.status" class="completed">completed</p>
-                          <p v-if="list.status == false" class="portical">P completed</p>
-                        </div>
-                      </div>
-                      <div class="d-flex align-items-center justify-content-between">
-                        <p>{{list.Product}}</p>
-                        <p>{{list.date}}</p>
-                      </div>
-                    </div>
-                  </router-link>
-                </b-card>
-              </template> -->
             </b-table>
           </div>
 

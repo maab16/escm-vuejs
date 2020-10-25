@@ -33,7 +33,6 @@
               src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d3806.168417089029!2d78.3601065!3d17.4516514!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3bcb96d354866e29%3A0xa3bb6dd20b896ece!2sSai%20Life%20Sciences%20Ltd.!5e0!3m2!1sen!2sin!4v1590643385724!5m2!1sen!2sin"
               width="100%"
               height="250"
-              frameborder="0"
               style="border:0;"
               allowfullscreen
               aria-hidden="false"

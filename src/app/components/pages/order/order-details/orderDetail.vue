@@ -179,7 +179,7 @@
                             ></label>
                           </div>
                         </th>
-                        <th scope="col" width="60">Sr. No.</th>
+                        <th scope="col" style="width: 60px">Sr. No.</th>
                         <th scope="col">Product Details</th>
                         <th scope="col">Quantity</th>
                         <th scope="col">Supplier</th>
@@ -203,7 +203,6 @@
                         </td>
                         <td>{{ index + 1 }}</td>
                         <td>
-                          <!-- <p class="text-order fw-600">{{item.products.badge}}</p> -->
                           <p class="text-black fw-500">{{ product.name }}</p>
                           <p class="text-black">{{ product.cas }}</p>
                           <p class="text-black">{{ product.purity }} Pure</p>
@@ -220,9 +219,6 @@
                           <p class="fs-12 text-right">INR {{ (product.inr * product.pivot.qty).toFixed(2) }}</p>
                         </td>
                         <td>
-                          <!-- <p>{{item.status}}</p>
-                          <p>PO No.: {{item.Pr}}</p>
-                          <p>PR No.:{{item.po}}</p> -->
                           <a
                             href="javascript:void(0)"
                             class="text-primary"
@@ -406,11 +402,7 @@
                     <div class="row no-gutters justify-content-between">
                       <div class="d-flex">
                         <p class="text-black fw-600">{{request.id}}</p>
-                        <div class="pl-2">
-                          <!-- <p class="text-order fw-600">{{request.products.badge}}</p> -->
-                          <!-- <p class="text-black fw-500 fs-14">{{request.product.name}}</p> -->
-                          <!-- <p class="text-black">{{request.products.pcode}}</p> -->
-                        </div>
+                        <div class="pl-2"></div>
                       </div>
                       <div class="d-flex align-items-end flex-column">
                         <p class="text-black">{{request.purity}} Pure</p>
@@ -438,9 +430,6 @@
                     </div>
                     <div class="col-md-2">
                       <div class="d-none d-lg-block d-md-block d-xl-block">
-                        <!-- <p class="text-order fw-600">{{request.products.badge}}</p> -->
-                        <!-- <p class="text-black fw-500">{{request.products.pname}}</p> -->
-                        <!-- <p class="text-black">{{request.products.pcode}}</p> -->
                         <p class="text-black">{{request.purity}} Pure</p>
                         <p class="text-black">Pack Size: {{request.packsize}}</p>
                       </div>

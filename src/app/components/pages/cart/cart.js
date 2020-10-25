@@ -188,7 +188,7 @@ export default {
               this.removeRequestCart(item)
             }
             this.recentDeleted = false
-          } else {}
+          }
         })
     },
     /**
@@ -231,7 +231,7 @@ export default {
           if (value === true) {
             this.orderDelete()
             this.recentDeleted = false
-          } else {}
+          }
         })
     },
     /**
@@ -289,7 +289,7 @@ export default {
           if (value === true) {
             this.removeAllCart()
             this.emptycartList = true
-          } else {}
+          }
         })
     },
     /**

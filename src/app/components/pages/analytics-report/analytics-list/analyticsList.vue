@@ -196,8 +196,6 @@
                   <li class="list-group-item" v-for="product in getUnavailableProducts" :key="product.id">
                     <p class="text-order fw-500">{{product.cas}}</p>
                     <div class="d-flex justify-content-between align-items-center">
-                      <!-- <p>{{products.Product}}</p> -->
-                      <!-- <p>{{products.equa}}</p> -->
                     </div>
                   </li>
                 </ul>

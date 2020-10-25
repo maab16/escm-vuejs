@@ -18,12 +18,6 @@
               </h3>
             </div>
             <div class="col-2 col-sm-4 col-md-3 text-right">
-              <!-- <a
-                v-if="selectcheck.length + singleRequest.length > 0"
-                href="javascript:void(0)"
-                class="text-primary"
-                @click="deleteSelect"
-              >Remove Selected</a> -->
             </div>
             <div class="col-3 col-sm-4 col-md-2 text-right">
               <a
