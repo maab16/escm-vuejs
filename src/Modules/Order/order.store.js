@@ -59,9 +59,6 @@ const actions = {
     let isInternalBuyer = rootGetters['user/isInternalBuyer']
     let isCustomer = rootGetters['user/isCustomer']
     let orders = []
-
-    console.log(option)
-
     if (user) {
       Order.insert({data: JSON.parse(localStorage.getItem('orders'))})
       OrderDetails.insert({data: JSON.parse(localStorage.getItem('orderDetails'))})
@@ -83,7 +80,7 @@ const actions = {
         commit(types.SET_SLS_ORDERS, Order.query().where(userKey, user.id).where('status', 'sls').count())
       }
       if (option.address) {
-        query.where('address_id', option.customer)
+        query.where('address_id', option.address)
       }
       if (option.customer) {
         query.where('user_id', option.customer)
@@ -103,8 +100,11 @@ const actions = {
       if (option.to) {
         query.where('created_at', (value) => value <= option.to)
       }
+      console.log(query)
       query.orderBy('updated_at', 'desc')
       orders = query.get()
+
+      console.log(orders)
 
       commit(types.SET_ORDERS, orders)
     }

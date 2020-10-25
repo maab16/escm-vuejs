@@ -1,10 +1,8 @@
-/* eslint no-shadow: ["error", { "allow": ["state"] }] */
-
 import Cookies from 'js-cookie'
 import * as types from './mutation-types'
 import Product from '@/Modules/Product/product.model'
 
-const stateData = {
+const state = {
   product: null,
   products: localStorage.getItem('products') != null
     ? JSON.parse(localStorage.getItem('products'))
@@ -195,7 +193,7 @@ const actions = {
   }
 }
 
-const gettersData = {
+const getters = {
   currency: state => state.currency,
   products: state => state.products,
   keywords: state => state.keywords,
@@ -230,44 +228,6 @@ const gettersData = {
       .query()
       .where('cas', cas)
       .get()
-  },
-  getSuppliers: (state) => (tags, option) => {
-    let suppliers = []
-    if (tags.length > 0) {
-      tags.forEach(tag => {
-        let query = Product.query().where('cas', tag)
-
-        if (option.purity != null) {
-          query.where('purity', option.purity)
-        }
-
-        if (option.qty != null) {
-          query.where('qty', option.qty)
-        }
-
-        if (option.packsize != null) {
-          query.where('packsize', option.packsize)
-        }
-
-        if (option.supplier != null) {
-          query.where('supplier', option.supplier)
-        }
-
-        if (option.warehouse != null) {
-          query.where('warehouse', option.warehouse)
-        }
-
-        if (option.delivery != null) {
-          query.where('delivery', option.delivery)
-        }
-
-        let products = query.first()
-        suppliers = products.map(product => {
-          return product.supplier
-        })
-      })
-    }
-    return suppliers
   },
   getAdavacedOptions: (state) => (tags, option) => {
     let purities = []
@@ -347,164 +307,12 @@ const gettersData = {
       warehouses: warehouses,
       deliveries: deliveries
     }
-  },
-  getQuantities: (state) => (tags, option) => {
-    let suppliers = []
-    if (tags.length > 0) {
-      tags.forEach(tag => {
-        let query = Product.query().where('cas', tag)
-
-        if (option.purity != null) {
-          query.where('purity', option.purity)
-        }
-
-        if (option.qty != null) {
-          query.where('qty', option.qty)
-        }
-
-        if (option.packsize != null) {
-          query.where('packsize', option.packsize)
-        }
-
-        if (option.supplier != null) {
-          query.where('supplier', option.supplier)
-        }
-
-        if (option.warehouse != null) {
-          query.where('warehouse', option.warehouse)
-        }
-
-        if (option.delivery != null) {
-          query.where('delivery', option.delivery)
-        }
-
-        let products = query.first()
-        suppliers = products.map(product => {
-          return product.supplier
-        })
-      })
-    }
-    return suppliers
-  },
-  getPacksizes: (state) => (tags, option) => {
-    let suppliers = []
-    if (tags.length > 0) {
-      tags.forEach(tag => {
-        let query = Product.query().where('cas', tag)
-
-        if (option.purity != null) {
-          query.where('purity', option.purity)
-        }
-
-        if (option.qty != null) {
-          query.where('qty', option.qty)
-        }
-
-        if (option.packsize != null) {
-          query.where('packsize', option.packsize)
-        }
-
-        if (option.supplier != null) {
-          query.where('supplier', option.supplier)
-        }
-
-        if (option.warehouse != null) {
-          query.where('warehouse', option.warehouse)
-        }
-
-        if (option.delivery != null) {
-          query.where('delivery', option.delivery)
-        }
-
-        let products = query.first()
-        suppliers = products.map(product => {
-          return product.supplier
-        })
-      })
-    }
-    return suppliers
-  },
-  getWarehouses: (state) => (tags, option) => {
-    let suppliers = []
-    if (tags.length > 0) {
-      tags.forEach(tag => {
-        let query = Product.query().where('cas', tag)
-
-        if (option.purity != null) {
-          query.where('purity', option.purity)
-        }
-
-        if (option.qty != null) {
-          query.where('qty', option.qty)
-        }
-
-        if (option.packsize != null) {
-          query.where('packsize', option.packsize)
-        }
-
-        if (option.supplier != null) {
-          query.where('supplier', option.supplier)
-        }
-
-        if (option.warehouse != null) {
-          query.where('warehouse', option.warehouse)
-        }
-
-        if (option.delivery != null) {
-          query.where('delivery', option.delivery)
-        }
-
-        let products = query.first()
-        suppliers = products.map(product => {
-          return product.supplier
-        })
-      })
-    }
-    return suppliers
-  },
-  getDeliveries: (state) => (tags, option) => {
-    let suppliers = []
-    if (tags.length > 0) {
-      tags.forEach(tag => {
-        let query = Product.query().where('cas', tag)
-
-        if (option.purity != null) {
-          query.where('purity', option.purity)
-        }
-
-        if (option.qty != null) {
-          query.where('qty', option.qty)
-        }
-
-        if (option.packsize != null) {
-          query.where('packsize', option.packsize)
-        }
-
-        if (option.supplier != null) {
-          query.where('supplier', option.supplier)
-        }
-
-        if (option.warehouse != null) {
-          query.where('warehouse', option.warehouse)
-        }
-
-        if (option.delivery != null) {
-          query.where('delivery', option.delivery)
-        }
-
-        let products = query.first()
-        suppliers = products.map(product => {
-          return product.supplier
-        })
-      })
-    }
-    return suppliers
   }
 }
 
 export default {
-  state: stateData,
+  state,
   mutations,
   actions,
-  getters: gettersData
+  getters
 }

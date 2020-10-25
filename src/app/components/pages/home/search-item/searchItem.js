@@ -140,6 +140,7 @@ export default {
       // })
     },
     value: function () {
+      this.filterOptions = this.getAdavacedOptions(this.value, this.advancedOption)
       if (this.disabled) {
         let options = {
           supplier: null,

@@ -241,6 +241,7 @@ export default {
      */
     onReset (evt) {
       evt.preventDefault()
+      this.address = null
       this.customer = null
       this.projectManager = null
       this.buyingLead = null
