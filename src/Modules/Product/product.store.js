@@ -195,7 +195,7 @@ const actions = {
   }
 }
 
-const getters = {
+const gettersData = {
   currency: state => state.currency,
   products: state => state.products,
   keywords: state => state.keywords,
@@ -506,5 +506,5 @@ export default {
   state: stateData,
   mutations,
   actions,
-  getters
+  getters: gettersData
 }

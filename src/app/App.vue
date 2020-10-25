@@ -37,7 +37,7 @@ import OrderDetails from '@/Modules/OrderDetails/order-details.model'
 import RequestDetails from '@/Modules/RequestDetails/request-details.model'
 import History from '@/Modules/History/history.model'
 import Comment from '@/Modules/Comment/comment.model'
-import moment from 'moment'
+// import moment from 'moment'
 
 export default {
   name: 'app',
