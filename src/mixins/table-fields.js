@@ -1,5 +1,3 @@
-import user from '@/mixins/user'
-
 export default {
   data () {
     return {
