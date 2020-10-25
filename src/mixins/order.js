@@ -2,7 +2,7 @@ import Order from '@/Modules/Order/order.model'
 import user from '@/mixins/user'
 import { mapGetters, mapActions } from 'vuex'
 
-const mixin = {
+export default {
   mixins: [user],
   computed: {
     ...mapGetters('order', [
@@ -138,5 +138,3 @@ const mixin = {
     }
   }
 }
-
-export default mixin

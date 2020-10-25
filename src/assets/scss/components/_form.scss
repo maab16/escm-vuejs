@@ -34,35 +34,26 @@
       }
     }
   }
-}
-  .form-group {
-    label {
-      font-size: $font-exta-small;
-      text-transform: uppercase;
-      color: $orderprimary;
-      margin-bottom: 0;
-      position: absolute;
-    }
 
-    .bv-no-focus-ring {
-      flex-direction: column;
-    }
+  .bv-no-focus-ring {
+    flex-direction: column;
+  }
 
-    .custom-select {
-      border: none;
-      border-radius: 0;
-      border-bottom: 1px solid $gray-400;
-      padding: 0;
-      font-size: $font-base;
-      color: $black;
-      align-items: flex-end;
-      background-position: center right;
+  .custom-select {
+    border: none;
+    border-radius: 0;
+    border-bottom: 1px solid $gray-400;
+    padding: 0;
+    font-size: $font-base;
+    color: $black;
+    align-items: flex-end;
+    background-position: center right;
 
-      &:focus {
-        box-shadow: none;
-      }
+    &:focus {
+      box-shadow: none;
     }
   }
+}
 
   .textarea {
     .form-control {

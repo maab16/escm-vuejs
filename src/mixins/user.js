@@ -1,8 +1,6 @@
-import Order from '@/Modules/Order/order.model'
-import moment from 'moment'
 import { mapActions, mapGetters } from 'vuex'
 
-const mixin = {
+export default {
   computed: {
     ...mapGetters('user', [
       'user',
@@ -33,5 +31,3 @@ const mixin = {
     ])
   }
 }
-
-export default mixin

@@ -22,29 +22,18 @@ middlewareContext.keys()
     routeMiddleware[middlewareName] = middleware.default
   })
 
-const router = createRouter()
+const router = new Router({
+  scrollBehavior,
+  mode: 'history',
+  routes
+})
+
+router.beforeEach(beforeEach)
+router.afterEach(afterEach)
 
 sync(store, router)
 
 export default router
-
-/**
- * Create a new router instance.
- *
- * @return {Router}
- */
-function createRouter () {
-  const router = new Router({
-    scrollBehavior,
-    mode: 'history',
-    routes
-  })
-
-  router.beforeEach(beforeEach)
-  router.afterEach(afterEach)
-
-  return router
-}
 
 /**
  * Global router guard.
@@ -58,9 +47,10 @@ async function beforeEach (to, from, next) {
 
   try {
     // Get the matched components and resolve them.
-    components = await resolveComponents(
+    components = resolveComponents(
       router.getMatchedComponents({ ...to })
     )
+    components = await components
   } catch (error) {
     if (/^Loading( CSS)? chunk (\d)+ failed\./.test(error.message)) {
       window.Location.reload(true)

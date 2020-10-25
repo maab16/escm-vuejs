@@ -1,7 +1,7 @@
 import user from '@/mixins/user'
 import { mapGetters, mapActions } from 'vuex'
 
-const mixin = {
+export default {
   mixins: [user],
   computed: {
     ...mapGetters('cart', [
@@ -26,5 +26,3 @@ const mixin = {
     }
   }
 }
-
-export default mixin
