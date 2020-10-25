@@ -55,6 +55,5 @@
   },
   "plugins": [
     "vue"
-  ],
-  "no-shadow": ["error", { "allow": ["state"] }]
+  ]
 }
