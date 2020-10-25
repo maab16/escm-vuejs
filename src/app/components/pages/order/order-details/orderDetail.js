@@ -267,6 +267,9 @@ export default {
         this.recentDelted = true
       }
     },
+    addPR () {
+      console.log('Adding PR')
+    },
     /**
      * Add pr number
      **/

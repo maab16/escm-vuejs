@@ -483,8 +483,7 @@
                         </div>
                         <div class="col-6 col-sm-6 col-md-2">
                           <input
-                            v-if="request.pr"
-                            v-model="request.pr"
+                            v-model="request.prno"
                             name="product_request_number"
                             type="text"
                             class="form-control input-sm"
@@ -492,8 +491,7 @@
                         </div>
                         <div class="col-6 col-sm-6 col-md-2">
                           <input
-                            v-if="request.po"
-                            v-model="request.po"
+                            v-model="request.pono"
                             :name="product_order_number"
                             type="text"
                             class="form-control input-sm"
@@ -504,7 +502,7 @@
                         <div class="col-6 offset-md-8 col-md-2">
                           <div class="form-group float-right m-0">
                             <a
-                              @click="addExperience()"
+                              @click="addPR()"
                               href="javascript:void(0)"
                               class="text-primary fs-14"
                             >Add PR</a>

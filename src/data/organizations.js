@@ -12,7 +12,7 @@ export default [
   {
     id: 2,
     name: 'Another Organization',
-    email: 'org2@escm.com',
+    email: 'org2@gmail.com',
     buying_lead_id: 8,
     created_at: moment().format('YYYY-MM-DD HH:mm:ss'),
     updated_at: moment().format('YYYY-MM-DD HH:mm:ss')

@@ -10,6 +10,8 @@ class OrderDetails extends Model {
       order_id: this.attr(),
       product_id: this.attr(),
       qty: this.number(1),
+      prno: this.string(null).nullable(),
+      pono: this.string(null).nullable(),
       created_at: this.string(date).nullable(),
       updated_at: this.string(date).nullable()
     }

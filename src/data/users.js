@@ -33,7 +33,7 @@ export default [
   {
     id: 4,
     organization_id: 2,
-    email: 'user3@escm.com',
+    email: 'maab.tips@gmail.com',
     fname: 'Md Abu Shahadat',
     lname: 'Kawser',
     mobile: '987426321',
