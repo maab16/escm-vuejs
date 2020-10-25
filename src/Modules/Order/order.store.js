@@ -8,7 +8,7 @@ import History from '@/Modules/History/history.model'
 import Comment from '@/Modules/Comment/comment.model'
 import moment from 'moment'
 
-const state = {
+const stateData = {
   orders: [],
   order: {},
   recentOrders: [],
@@ -350,7 +350,7 @@ const getters = {
 }
 
 export default {
-  state,
+  state: stateData,
   mutations,
   actions,
   getters

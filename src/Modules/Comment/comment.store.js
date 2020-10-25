@@ -4,7 +4,7 @@ import * as types from './mutation-types'
 import Comment from '@/Modules/Comment/comment.model'
 import moment from 'moment'
 
-const state = {
+const stateData = {
   comments: []
 }
 const mutations = {
@@ -38,7 +38,7 @@ const getters = {
 }
 
 export default {
-  state,
+  state: stateData,
   mutations,
   actions,
   getters

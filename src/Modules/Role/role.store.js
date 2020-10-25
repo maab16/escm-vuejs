@@ -3,7 +3,7 @@
 import * as types from './mutation-types'
 import Role from './role.model'
 
-const state = {
+const stateData = {
   roles: []
 }
 const mutations = {
@@ -24,7 +24,7 @@ const getters = {
 }
 
 export default {
-  state,
+  state: stateData,
   mutations,
   actions,
   getters

@@ -6,7 +6,7 @@ import * as types from './mutation-types'
 import emailjs from 'emailjs-com'
 emailjs.init('user_JwIHhf5su4OZ9muYnGiuQ')
 
-const state = {
+const stateData = {
   user: localStorage.getItem('user') != null
     ? JSON.parse(localStorage.getItem('user'))
     : null,
@@ -197,7 +197,7 @@ const getters = {
 }
 
 export default {
-  state,
+  state: stateData,
   mutations,
   actions,
   getters

@@ -3,7 +3,7 @@
 import Supplier from '@/Modules/Supplier/supplier.model'
 import * as types from './mutation-types'
 
-const state = {}
+const stateData = {}
 
 const mutations = {}
 
@@ -12,7 +12,7 @@ const actions = {}
 const getters = {}
 
 export default {
-  state,
+  state: stateData,
   mutations,
   actions,
   getters

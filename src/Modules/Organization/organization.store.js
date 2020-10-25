@@ -2,7 +2,7 @@
 
 import Organization from '@/Modules/Organization/organization.model'
 
-const state = {
+const stateData = {
   organizations: null
 }
 
@@ -24,7 +24,7 @@ const getters = {
 }
 
 export default {
-  state,
+  state: stateData,
   mutations,
   actions,
   getters

@@ -3,7 +3,7 @@
 import * as types from './mutation-types'
 import RequestDetails from '../RequestDetails/request-details.model'
 
-const state = {
+const stateData = {
   orders: []
 }
 const mutations = {
@@ -35,7 +35,7 @@ const getters = {
 }
 
 export default {
-  state,
+  state: stateData,
   mutations,
   actions,
   getters

@@ -3,7 +3,7 @@
 import * as types from './mutation-types'
 import Address from '@/Modules/User/address.model'
 
-const state = {
+const stateData = {
   carts: localStorage.getItem('carts') != null
     ? JSON.parse(localStorage.getItem('carts'))
     : [],
@@ -197,7 +197,7 @@ const getters = {
 }
 
 export default {
-  state,
+  state: stateData,
   mutations,
   actions,
   getters

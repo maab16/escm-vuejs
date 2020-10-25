@@ -8,7 +8,7 @@ import Organization from '@/Modules/Organization/organization.model'
 import RequestDetails from '@/Modules/RequestDetails/request-details.model'
 import moment from 'moment'
 
-const state = {
+const stateData = {
   orders: [],
   popularProducts: [],
   getOrdersByMonth: [],
@@ -424,7 +424,7 @@ const getters = {
 }
 
 export default {
-  state,
+  state: stateData,
   mutations,
   actions,
   getters

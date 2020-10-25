@@ -4,7 +4,7 @@ import Cookies from 'js-cookie'
 import * as types from './mutation-types'
 import Product from '@/Modules/Product/product.model'
 
-const state = {
+const stateData = {
   product: null,
   products: localStorage.getItem('products') != null
     ? JSON.parse(localStorage.getItem('products'))
@@ -503,7 +503,7 @@ const getters = {
 }
 
 export default {
-  state,
+  state: stateData,
   mutations,
   actions,
   getters
