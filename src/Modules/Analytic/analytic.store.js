@@ -8,7 +8,7 @@ import Organization from '@/Modules/Organization/organization.model'
 import RequestDetails from '@/Modules/RequestDetails/request-details.model'
 import moment from 'moment'
 
-const state = {
+let state = {
   orders: [],
   popularProducts: [],
   getOrdersByMonth: [],
@@ -153,10 +153,11 @@ const actions = {
           })
         }
       })
-      commit(types.SET_ANALYTIC_ORDERS, orders)
-      commit(types.SET_CUSTOMER_ORDERS, customerOrders.sort((order1, order2) => {
+      customerOrders = customerOrders.sort((order1, order2) => {
         return order1.total < order2.total ? 1 : order1.total > order2.total ? -1 : 0
-      }))
+      })
+      commit(types.SET_ANALYTIC_ORDERS, orders)
+      commit(types.SET_CUSTOMER_ORDERS, customerOrders)
     }
   },
   async setPopularProducts ({commit, rootGetters}) {
