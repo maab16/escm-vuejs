@@ -18,8 +18,8 @@ const middlewareContext = require.context('../middleware', false, /.*\.js$/)
 middlewareContext.keys()
   .map(file => {
     const middlewareName = file.replace(/(^.\/)|(\.js$)/g, '')
-    const middleware = middlewareContext(file)
-    routeMiddleware[middlewareName] = middleware.default
+    const middlewareModule = middlewareContext(file)
+    routeMiddleware[middlewareName] = middlewareModule.default
   })
 
 const router = new Router({
@@ -64,12 +64,8 @@ async function beforeEach (to, from, next) {
   if (components[components.length - 1].loading !== false) {
     // router.app.$nextTick(() => router.app.$loading.start())
   }
-
-  // Get the middleware for all the matched components.
-  const middleware = getMiddleware(components)
-
   // Call each middleware.
-  callMiddleware(middleware, to, from, (...args) => {
+  callMiddleware(getMiddleware(components), to, from, (...args) => {
     // Set the application layout only if "next()" was called with no args.
     if (args.length === 0) {
       // router.app.setLayout(components[0].layout || '')
@@ -100,8 +96,8 @@ async function afterEach (to, from, next) {
  * @param {Route} from
  * @param {Function} next
  */
-function callMiddleware (middleware, to, from, next) {
-  const stack = middleware.reverse()
+function callMiddleware (middlewares, to, from, next) {
+  const stack = middlewares.reverse()
 
   const _next = (...args) => {
     // Stop if "_next" was called with an argument or the stack is empty.
@@ -113,7 +109,7 @@ function callMiddleware (middleware, to, from, next) {
       return next(...args)
     }
 
-    let middleware = stack.pop()
+    const middleware = stack.pop()
 
     if (typeof middleware === 'function') {
       middleware(to, from, _next)
@@ -146,17 +142,17 @@ function resolveComponents (components) {
  * @return {Array}
  */
 function getMiddleware (components) {
-  let middleware = [...globalMiddleware]
+  let middlewares = [...globalMiddleware]
 
   components.filter(c => c.middleware).forEach(component => {
     if (Array.isArray(component.middleware)) {
-      middleware.push(...component.middleware)
+      middlewares.push(...component.middleware)
     } else {
-      middleware.push(component.middleware)
+      middlewares.push(component.middleware)
     }
   })
 
-  return middleware
+  return middlewares
 }
 
 /**
