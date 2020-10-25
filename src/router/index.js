@@ -47,9 +47,11 @@ async function beforeEach (to, from, next) {
 
   try {
     // Get the matched components and resolve them.
-    components = await resolveComponents(
-      router.getMatchedComponents({ ...to })
-    )
+    const matchedComponents = router.getMatchedComponents({ ...to })
+    components = await Promise.all(
+      matchedComponents.map(component => {
+        return typeof component === 'function' ? component() : component
+      }))
   } catch (error) {
     if (/^Loading( CSS)? chunk (\d)+ failed\./.test(error.message)) {
       window.Location.reload(true)
@@ -121,18 +123,6 @@ function callMiddleware (middlewares, to, from, next) {
   }
 
   _next()
-}
-
-/**
- * Resolve async components.
- *
- * @param  {Array} components
- * @return {Array}
- */
-function resolveComponents (components) {
-  return Promise.all(components.map(component => {
-    return typeof component === 'function' ? component() : component
-  }))
 }
 
 /**

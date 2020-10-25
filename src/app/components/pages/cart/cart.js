@@ -192,49 +192,6 @@ export default {
         })
     },
     /**
-     * order delete modal
-     */
-    deleteSelect () {
-      const h = this.$createElement
-      const titleVNode = h('div', {
-        class: ['position-absolute p-0 w-100 d-flex justify-content-center']
-      }, [])
-      // More complex structure
-      const messageVNode = h('div', {}, [
-        h('p', {
-          class: ['text-left pb-20 fw-600 text-uppercase']
-        }, [
-          'Remove'
-        ]),
-        h('p', {
-          class: ['text-left']
-        }, [
-          'Are you sure you want remove selected Items?'
-        ])
-      ])
-      this.select = ''
-      this.$bvModal.msgBoxConfirm(
-        [messageVNode], {
-          title: [titleVNode],
-          size: 'sm',
-          buttonSize: 'sm',
-          okVariant: 'primary',
-          okTitle: 'Remove',
-          cancelTitle: 'Cancel',
-          cancelVariant: 'link',
-          hideHeaderClose: true,
-          centered: true,
-          headerClass: 'p-0 border-bottom-0',
-          footerClass: 'pb-2 border-top-0'
-        })
-        .then(value => {
-          if (value === true) {
-            this.orderDelete()
-            this.recentDeleted = false
-          }
-        })
-    },
-    /**
      * order delete value
      */
     orderDelete () {
