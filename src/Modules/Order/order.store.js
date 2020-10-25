@@ -52,7 +52,7 @@ const mutations = {
   }
 }
 const actions = {
-  setOrders ({commit, rootGetters}, option) {
+  setOrders ({dispatch, commit, rootGetters}, option) {
     let user = rootGetters['user/user']
     let isManager = rootGetters['user/isManager']
     let isBuyingLead = rootGetters['user/isBuyingLead']
@@ -75,9 +75,7 @@ const actions = {
       }
       if (userKey) {
         query.where(userKey, user.id)
-        commit(types.SET_SUCCESSFULL_ORDERS, Order.query().where(userKey, user.id).where('status', 'successful').count())
-        commit(types.SET_COMPLETED_ORDERS, Order.query().where(userKey, user.id).where('status', 'completed').count())
-        commit(types.SET_SLS_ORDERS, Order.query().where(userKey, user.id).where('status', 'sls').count())
+        dispatch('setStatusOrders', {userKey, user})
       }
       if (option.address) {
         query.where('address_id', option.address)
@@ -207,7 +205,6 @@ const actions = {
     return {success: false, id: undefined}
   },
   async fetchOrderDetails ({commit}, id) {
-
     Order.insert({data: JSON.parse(localStorage.getItem('orders'))})
     OrderDetails.insert({data: JSON.parse(localStorage.getItem('orderDetails'))})
     RequestDetails.insert({data: JSON.parse(localStorage.getItem('requestDetails'))})
@@ -222,7 +219,12 @@ const actions = {
       .first()
     commit(types.FETCH_ORDER, order)
   },
-  async setRecentOrders ({commit, rootGetters}) {
+  setStatusOrders ({commit}, {userKey, user}) {
+    commit(types.SET_SUCCESSFULL_ORDERS, Order.query().where(userKey, user.id).where('status', 'successful').count())
+    commit(types.SET_COMPLETED_ORDERS, Order.query().where(userKey, user.id).where('status', 'completed').count())
+    commit(types.SET_SLS_ORDERS, Order.query().where(userKey, user.id).where('status', 'sls').count())
+  },
+  async setRecentOrders ({dispatch, commit, rootGetters}) {
     let user = rootGetters['user/user']
     let isManager = rootGetters['user/isManager']
     let isBuyingLead = rootGetters['user/isBuyingLead']
@@ -233,34 +235,20 @@ const actions = {
       OrderDetails.update({data: JSON.parse(localStorage.getItem('orderDetails'))})
 
       let orders = []
-      let userKey = ''
       let query = Order.query().withAllRecursive()
-      if (isManager) {
-        userKey = 'manager_id'
-      } else if (isBuyingLead) {
-        userKey = 'buying_lead_id'
-      } else if (isInternalBuyer) {
-        userKey = 'internal_buyer_id'
-      } else if (isCustomer) {
-        userKey = 'user_id'
-      }
+      let userKey = isManager ? 'manager_id'
+        : isBuyingLead ? 'buying_lead_id'
+          : isInternalBuyer ? 'internal_buyer_id'
+            : isCustomer ? 'user_id' : ''
       if (userKey) {
         query.where(userKey, user.id)
-        commit(types.SET_SUCCESSFULL_ORDERS, Order.query().where(userKey, user.id).where('status', 'successful').count())
-        commit(types.SET_COMPLETED_ORDERS, Order.query().where(userKey, user.id).where('status', 'completed').count())
-        commit(types.SET_SLS_ORDERS, Order.query().where(userKey, user.id).where('status', 'sls').count())
       }
       query.orderBy('updated_at', 'desc')
       if (process.env.RECENT_ORDERS_LIMIT) {
         query.limit(process.env.RECENT_ORDERS_LIMIT)
       }
       orders = query.get()
-
-      // orders = orders.sort(function (left, right) {
-      //   return moment.utc(left.updated_at) < moment.utc(right.updated_at) ? 1 : moment.utc(left.updated_at) >  moment.utc(right.updated_at) ? -1 : 0
-      //   // return moment.utc(left.updated_at).diff(moment.utc(right.updated_at))
-      // }).slice(0, 5)
-
+      dispatch('setStatusOrders', {userKey, user})
       commit(types.SET_RECENT_ORDERS, orders)
       return true
     }
