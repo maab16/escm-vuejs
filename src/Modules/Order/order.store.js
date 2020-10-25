@@ -251,6 +251,9 @@ const actions = {
         commit(types.SET_SLS_ORDERS, Order.query().where(userKey, user.id).where('status', 'sls').count())
       }
       query.orderBy('updated_at', 'desc')
+      if (process.env.RECENT_ORDERS_LIMIT) {
+        query.limit(process.env.RECENT_ORDERS_LIMIT)
+      }
       orders = query.get()
 
       // orders = orders.sort(function (left, right) {
