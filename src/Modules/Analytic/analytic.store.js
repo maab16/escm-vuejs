@@ -8,6 +8,20 @@ import Organization from '@/Modules/Organization/organization.model'
 import RequestDetails from '@/Modules/RequestDetails/request-details.model'
 import moment from 'moment'
 
+const state = {
+  orders: [],
+  popularProducts: [],
+  getOrdersByMonth: [],
+  getCompanyDistributionData: [],
+  getUnavailableProductsByMonth: [],
+  getUnavailableProducts: [],
+  successfulOrders: [],
+  slsOrders: [],
+  completedOrders: [],
+  pendingOrders: [],
+  customerOrders: [],
+  internalBuyerOrders: []
+}
 const mutations = {
   [types.SET_ANALYTIC_ORDERS] (state, orders) {
     state.orders = orders
@@ -407,21 +421,6 @@ const getters = {
   slsOrders: (state) => state.slsOrders,
   completedOrders: (state) => state.completedOrders,
   pendingOrders: (state) => state.pendingOrders
-}
-
-const state = {
-  orders: [],
-  popularProducts: [],
-  getOrdersByMonth: [],
-  getCompanyDistributionData: [],
-  getUnavailableProductsByMonth: [],
-  getUnavailableProducts: [],
-  successfulOrders: [],
-  slsOrders: [],
-  completedOrders: [],
-  pendingOrders: [],
-  customerOrders: [],
-  internalBuyerOrders: []
 }
 
 export default {
