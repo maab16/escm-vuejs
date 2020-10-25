@@ -1,3 +1,5 @@
+/* eslint no-shadow: ["error", { "allow": ["state"] }] */
+
 import Organization from '@/Modules/Organization/organization.model'
 
 const state = {

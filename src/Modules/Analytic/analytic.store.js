@@ -1,3 +1,5 @@
+/* eslint no-shadow: ["error", { "allow": ["state"] }] */
+
 import * as types from './mutation-types'
 import User from '@/Modules/User/user.model'
 import Order from '@/Modules/Order/order.model'
@@ -6,7 +8,7 @@ import Organization from '@/Modules/Organization/organization.model'
 import RequestDetails from '@/Modules/RequestDetails/request-details.model'
 import moment from 'moment'
 
-const analyticState = {
+const state = {
   orders: [],
   popularProducts: [],
   getOrdersByMonth: [],
@@ -421,7 +423,7 @@ const getters = {
 }
 
 export default {
-  state: analyticState,
+  state,
   mutations,
   actions,
   getters

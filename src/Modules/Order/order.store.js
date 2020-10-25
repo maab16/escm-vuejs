@@ -1,3 +1,5 @@
+/* eslint no-shadow: ["error", { "allow": ["state"] }] */
+
 import * as types from './mutation-types'
 import Order from '@/Modules/Order/order.model'
 import OrderDetails from '@/Modules/OrderDetails/order-details.model'

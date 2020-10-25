@@ -1,3 +1,5 @@
+/* eslint no-shadow: ["error", { "allow": ["state"] }] */
+
 import Cookies from 'js-cookie'
 import * as types from './mutation-types'
 import Product from '@/Modules/Product/product.model'

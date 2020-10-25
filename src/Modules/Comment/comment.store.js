@@ -1,3 +1,5 @@
+/* eslint no-shadow: ["error", { "allow": ["state"] }] */
+
 import * as types from './mutation-types'
 import Comment from '@/Modules/Comment/comment.model'
 import moment from 'moment'
