@@ -47,10 +47,9 @@ async function beforeEach (to, from, next) {
 
   try {
     // Get the matched components and resolve them.
-    components = resolveComponents(
+    components = await resolveComponents(
       router.getMatchedComponents({ ...to })
     )
-    components = await components
   } catch (error) {
     if (/^Loading( CSS)? chunk (\d)+ failed\./.test(error.message)) {
       window.Location.reload(true)
@@ -114,7 +113,7 @@ function callMiddleware (middleware, to, from, next) {
       return next(...args)
     }
 
-    const middleware = stack.pop()
+    let middleware = stack.pop()
 
     if (typeof middleware === 'function') {
       middleware(to, from, _next)
@@ -147,7 +146,7 @@ function resolveComponents (components) {
  * @return {Array}
  */
 function getMiddleware (components) {
-  const middleware = [...globalMiddleware]
+  let middleware = [...globalMiddleware]
 
   components.filter(c => c.middleware).forEach(component => {
     if (Array.isArray(component.middleware)) {
