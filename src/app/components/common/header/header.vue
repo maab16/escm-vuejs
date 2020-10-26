@@ -65,7 +65,7 @@
                   <p>EUR</p>
                   <p>1EUR = 82.81INR</p>
                 </b-dropdown-item>
-                <li role="presentation" class="bg-g300 rounded-bottom">
+                <b-nav-item role="presentation" class="bg-g300 rounded-bottom">
                   <a
                     role="menuitem"
                     rel="noopener noreferrer"
@@ -76,7 +76,7 @@
                     Source:
                     <span class="text-blue">economictimes</span>
                   </a>
-                </li>
+                </b-nav-item>
               </b-nav-item-dropdown>
             </b-navbar-nav>
           </div>
@@ -111,7 +111,7 @@
                   <p>EUR</p>
                   <p>1EUR = 82.81INR</p>
                 </b-dropdown-item>
-                <li role="presentation" class="bg-g300 rounded-bottom">
+                <b-nav-item role="presentation" class="bg-g300 rounded-bottom">
                   <a
                     role="menuitem"
                     rel="noopener noreferrer"
@@ -122,7 +122,7 @@
                     Source:
                     <span class="text-blue">economictimes</span>
                   </a>
-                </li>
+                </b-nav-item>
               </b-dropdown>
             </div>
             <div class="">

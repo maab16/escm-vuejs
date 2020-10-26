@@ -124,7 +124,7 @@ export default {
      */
   watch: {
     currentPage: function () {
-      if (this.currentPage === '/home/searchresult') {
+      if (this.currentPage == '/home/searchresult') {
         this.topSearchbar = true
       } else {
         this.topSearchbar = false

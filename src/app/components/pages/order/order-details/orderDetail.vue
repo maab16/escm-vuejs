@@ -161,7 +161,7 @@
                       v-b-modal.modal-prevent-update
                     >Update Selected</a>
                   </div>
-                  <table class="table product-details d-none d-lg-block d-md-block d-xl-block">
+                  <table class="table product-details d-none d-lg-block d-md-block d-xl-block" aria-describedby="Order details">
                     <thead class="thead-light">
                       <tr>
                         <th scope="col" class="pt-0 pb-0 pr-0">

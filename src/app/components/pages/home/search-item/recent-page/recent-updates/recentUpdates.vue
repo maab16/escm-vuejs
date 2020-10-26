@@ -4,8 +4,8 @@
       <b-list-group-item href="javascript:void(0)" v-for="item in updates" :key="item.message" class="p-15">
         <div class="d-flex update-list">
           <div class="pr-10 update-icon">
-            <i class="sls-icons sls-24 order" v-if="item.order"></i>
-            <i class="sls-icons sls-24 comment" v-if="!item.order"></i>
+            <em class="sls-icons sls-24 order" v-if="item.order"></em>
+            <em class="sls-icons sls-24 comment" v-if="!item.order"></em>
           </div>
           <div class="update-test">
             <div>

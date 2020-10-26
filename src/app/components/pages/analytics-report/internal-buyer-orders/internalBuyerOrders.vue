@@ -211,12 +211,12 @@
                           <template v-slot:button-content class="p-0">
                             <em class="sls-icons sls-24 order-details"></em>
                           </template>
-                          <li>
+                          <b-nav-item>
                             <router-link
                               class="dropdown-item"
                               :to="'/order/order-detail/' + row.item.id"
                             >View Details</router-link>
-                          </li>
+                          </b-nav-item>
                         </b-dropdown>
                       </div>
                     </div>

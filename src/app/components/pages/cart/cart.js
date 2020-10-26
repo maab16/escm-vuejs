@@ -253,12 +253,12 @@ export default {
      * reload page
      * */
     reloadcart () {
-      // this.$router.push({
-      //   name: 'reload',
-      //   params: {
-      //     name: 'cart'
-      //   }
-      // })
+      this.$router.push({
+        name: 'reload',
+        params: {
+          name: 'cart'
+        }
+      })
       // this.$router.go()
     },
     /**

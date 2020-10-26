@@ -190,7 +190,9 @@
                     <template v-slot:button-content class="p-0">
                       <em class="sls-icons sls-24 order-details"></em>
                     </template>
-                    <li><router-link class="dropdown-item" :to="'/order/order-detail/' + data.value.id">View Details</router-link></li>
+                    <b-nav-item>
+                      <router-link class="dropdown-item" :to="'/order/order-detail/' + data.value.id">View Details</router-link>
+                    </b-nav-item>
                   </b-dropdown>
                 </div>
               </template>
