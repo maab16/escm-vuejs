@@ -1,6 +1,7 @@
 import analyticMixin from '@/mixins/analytic'
 
 export default {
+  middleware: ['auth', 'analytic'],
   mixins: [analyticMixin],
   mounted () {
     this.fetchInternalBuyerOrders()

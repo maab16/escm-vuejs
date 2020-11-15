@@ -27,13 +27,17 @@ export default {
       selectedList: [],
       requestedList: [],
       emptycartList: false,
-      recentDeleted: false
+      recentDeleted: false,
+      requestItem: {}
     }
   },
   created () {
+    if ((this.orderList.length + this.requestList.length) < 1) {
+      this.emptycartList = true
+    }
+    this.fetchCartItems()
     // this.orderList = this.carts
     // this.requestList = this.requests
-    console.log('Created')
   },
   mounted () {
     this.selectcheck = this.orderList
@@ -45,7 +49,10 @@ export default {
     ...mapGetters('cart', {
       orderList: 'carts',
       requestList: 'requests'
-    })
+    }),
+    ...mapGetters('product', [
+      'currency'
+    ])
   },
   watch: {
     selectcheck: function () {
@@ -64,13 +71,18 @@ export default {
   },
   methods: {
     ...mapActions('cart', [
+      'setCartItems',
       'setCheckList',
       'setOnlyRequestList',
       'removeCart',
       'removeAllCart',
       'removeRequestCart',
-      'updateCart'
+      'updateCart',
+      'changeCartToRequest'
     ]),
+    async fetchCartItems () {
+      await this.setCartItems()
+    },
     updateCartPrice (item) {
       this.updateCart(item)
     },
@@ -187,6 +199,10 @@ export default {
               })
               this.removeRequestCart(item)
             }
+
+            if ((this.orderList.length + this.requestList.length) < 1) {
+              this.emptycartList = true
+            }
             this.recentDeleted = false
           }
         })
@@ -253,23 +269,38 @@ export default {
      * reload page
      * */
     reloadcart () {
-      this.$router.push({
-        name: 'reload',
-        params: {
-          name: 'cart'
-        }
-      })
+      this.fetchCartItems()
+      // this.$router.push({
+      //   name: 'reload',
+      //   params: {
+      //     name: 'cart'
+      //   }
+      // })
       // this.$router.go()
     },
     /**
      * request Modal show
      * */
-    showModal () {
+    showModal (item) {
+      this.requestItem = {...item}
       this.$refs['my-modal'].show()
     },
     requestChange () {
+      if (this.requestItem.qty < 1 || this.requestItem.qty > 99) {
+        return
+      }
+      if (this.requestItem.purity < 50 || this.requestItem.purity > 100) {
+        return
+      }
+      if (!this.requestItem.description || this.requestItem.description.length < 1) {
+        return
+      }
+
+      this.changeCartToRequest(this.requestItem)
+      this.fetchCartItems()
+      this.singleRequest = this.requestList
       this.$refs['my-modal'].hide()
-      this.orderList.find(list => list.id === 3).request = false
+      // this.orderList.find(list => list.id === 3).request = false
     }
   }
 }

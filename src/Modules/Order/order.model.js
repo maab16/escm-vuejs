@@ -19,6 +19,7 @@ class Order extends Model {
       buying_lead_id: this.attr(null),
       internal_buyer_id: this.attr(null),
       address_id: this.attr(null),
+      currency: this.string('usd'),
       status: this.string('successful'),
       created_at: this.string(date).nullable(),
       updated_at: this.string(date).nullable(),

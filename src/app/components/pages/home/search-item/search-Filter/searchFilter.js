@@ -55,6 +55,7 @@ export default {
       this.advancedOption.qty = null
       this.advancedOption.purity = null
       this.advancedOption.delivery = null
+      this.$emit('reset-tags')
       this.setAdvancedOptions(this.advancedOption)
       this.options = this.getAdavacedOptions(this.tags, this.advancedOption)
       this.$nextTick(() => {})

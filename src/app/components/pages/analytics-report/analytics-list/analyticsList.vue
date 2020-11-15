@@ -135,7 +135,7 @@
               <div class="card-body">
                 <ul class="list-group">
                   <li class="list-group-item" v-for="product in popularProducts" :key="product.id">
-                    <p class="text-order fw-500">{{product.cas}}</p>
+                    <p class="text-order fw-500">{{product.cas}} ( orders: {{product.orders.length}} )</p>
                     <div class="d-flex justify-content-between align-items-center">
                       <p>{{product.name}}</p>
                       <p>{{product.equation}}</p>
@@ -210,7 +210,7 @@
           <div class="col-md-8">
             <div class="card">
               <div class="card-header">
-                <p class="text-order"><router-link to="analytics/internal-buyer-orders">Buyers Vs Orders</router-link></p>
+                <p class="text-order">Buyers Vs Orders</p>
               </div>
               <div class="card-body bar-chart">
                 <BarChart3></BarChart3>
@@ -224,7 +224,7 @@
               </div>
               <div class="card-body">
                 <ul class="list-group">
-                  <li class="list-group-item" v-for="company in getCompanyDistributionData" :key="company.id">
+                  <li class="list-group-item" v-for="company in getBuyerCompanyData" :key="company.id">
                     <div class="d-flex justify-content-between align-items-center">
                       <p>{{company.name}}</p>
                       <p>{{company.total}}</p>

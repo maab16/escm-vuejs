@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div v-if="order">
     <div class="container">
       <div>
         <div v-if="ordernum == order.id">
@@ -44,16 +44,21 @@
                           <span class="text-order">Order No.:</span>
                           {{order.id}}
                         </p>
+                        <p class="small">{{ format(order.updated_at, 'MMM DD, YYYY - HH:mm a') }}</p>
                         <p class="small text-order2">{{order.date}}</p>
                         <div class="d-flex align-items-center pb-10">
-                          <div v-if="statusProject == 'Placed with SLS'">
-                            <em class="portial bg-primary"></em>
-                            <span class="fs-14">{{ statusProject }}</span>
-                            <a
+                          <div class="status-icons">
+                            <p class="status-order">
+                              <em class="portial bg-primary"></em>
+                              <span class="status" :class="order.status === 'completed' ? 'bg-success' : order.status === 'sls' ? 'bg-primary' : 'bg-info'"></span>
+                              <span class="fs-14">{{ order.status }}</span>
+                              <a
+                              v-if="order.status !== 'completed' && (isSupplierManager || isAdmin || isBuyingLead || isInternalBuyer || isManager)"
                               href="javascript:void(0)"
                               class="pl-10 text-primary fs-14"
                               v-b-modal.modal-prevent-closing
                             >Update Status</a>
+                            </p>
                           </div>
                           <div v-if="statusProject == 'Completed'">
                             <em class="portial bg-success"></em>
@@ -73,8 +78,10 @@
                         <div class>
                           <p class="text-order small">Order Total</p>
                           <p class="text-black small pb-10">
-                            {{ currency.toUpperCase() }} {{ total.toFixed(2) }}
-                            <span v-b-tooltip.hover.right="'View Breackup'">
+                            {{ currency.toUpperCase() }} {{ total }}
+                            <span
+                              v-b-tooltip.hover.right="'View Breackup'"
+                            >
                               <a href="#notes">
                                 <em class="sls-icons sls-24 i-icons"></em>
                               </a>
@@ -82,25 +89,32 @@
                           </p>
                         </div>
                       </div>
-                      <div class="col-6 col-sm-6 col-md-4">
+                      <div
+                        v-if="isSupplierManager || isAdmin || isBuyingLead || isInternalBuyer || isManager"
+                        class="col-6 col-sm-6 col-md-4">
                         <div class>
                           <p class="text-order small">Placed By</p>
-                          <p class="text-black small pb-10">{{ order.user.fname }} {{ order.user.lname }}</p>
+                          <p
+                            class="text-black small pb-10"
+                          >{{ order.user.fname }} {{ order.user.lname }}</p>
                         </div>
                       </div>
-                      <div class="col-6 col-sm-6 col-md-4">
+                      <div
+                        v-if="isSupplierManager || isAdmin || isBuyingLead || isInternalBuyer || isManager"
+                        class="col-6 col-sm-6 col-md-4">
                         <div class>
                           <p class="text-order small">For Customer</p>
-                          <p class="text-black small pb-10" v-if="order.user.organization">{{ order.user.organization.name }}</p>
+                          <p
+                            class="text-black small pb-10"
+                            v-if="order.user.organization"
+                          >{{ order.user.organization.name }}</p>
                         </div>
                       </div>
                       <div class="col-sm-12 col-md-8">
                         <div class="pt-10">
                           <p class="text-order small">Delivery Address:</p>
                           <p class="text-black small">{{ order.address.line1 }}</p>
-                          <p
-                            class="text-order2 small"
-                          >{{ order.address.line2 }}</p>
+                          <p class="text-order2 small">{{ order.address.line2 }}</p>
                         </div>
                       </div>
                     </div>
@@ -108,16 +122,21 @@
                     <div class="pt-20 bl-assign">
                       <div class="bg-g100 rounded p-15">
                         <div class="row">
-                          <div class="col-md-4 col-lg-4" v-if="isBuyingLead || isInternalBuyer">
+                          <div class="col-md-4 col-lg-4" v-if="isSupplierManager || isAdmin">
                             <div class="bl-list p-0">
                               <p class="text-order small">Project Manager</p>
                               <p class="small">
-                                <span v-if="order.manager">{{ order.manager.fname }} {{ order.manager.lname }}</span>
+                                <span
+                                  v-if="order.manager"
+                                >{{ order.manager.fname }} {{ order.manager.lname }}</span>
                                 <a
                                   href="javascript:void(0)"
                                   class="pl-s5 text-primary fs-14"
                                   @click="openModal('project-manager-modal')"
-                                >Change</a>
+                                >
+                                <span v-if="order.manager">Change</span>
+                                <span v-else>Assign</span>
+                                </a>
                               </p>
                             </div>
                           </div>
@@ -125,25 +144,37 @@
                             <div class="bl-list">
                               <p class="text-order small">Buying Lead</p>
                               <p class="small">
-                                <span v-if="order.buying_lead">{{ order.buying_lead.fname }} {{ order.buying_lead.lname }}</span>
+                                <span
+                                  v-if="order.buying_lead"
+                                >{{ order.buying_lead.fname }} {{ order.buying_lead.lname }}</span>
+                                <span v-else>Unassigned</span>
                                 <a
                                   href="javascript:void(0)"
                                   class="pl-s5 text-primary fs-14"
                                   @click="openModal('buying-lead-modal')"
-                                >Change</a>
+                                >
+                                <span v-if="order.buying_lead">Change</span>
+                                <span v-else>Assign</span>
+                                </a>
                               </p>
                             </div>
                           </div>
-                          <div class="col-md-4 col-lg-4" v-if="isBuyingLead">
+                          <div class="col-md-4 col-lg-4" v-if="isBuyingLead || isInternalBuyer">
                             <div class="bl-list">
                               <p class="text-order small">Internal Buyer</p>
                               <p class="small">
-                                <span v-if="order.internal_buyer">{{ order.internal_buyer.fname }} {{ order.internal_buyer.lname }}</span>
+                                <span
+                                  v-if="order.internal_buyer"
+                                >{{ order.internal_buyer.fname }} {{ order.internal_buyer.lname }}</span>
+                                <span v-else>Unassigned</span>
                                 <a
                                   href="javascript:void(0)"
                                   class="pl-s5 text-primary fs-14"
-                                  @click="openModal('internal-buyer-modal')"
-                                >Change</a>
+                                  @click="openBuyerModal('internal-buyer-modal')"
+                                >
+                                <span v-if="order.internal_buyer">Change</span>
+                                <span v-else>Assign</span>
+                                </a>
                               </p>
                             </div>
                           </div>
@@ -155,16 +186,21 @@
                   <div class="d-flex justify-content-between pt-20">
                     <p class="text-order small text-uppercase pb-10">Product details:</p>
                     <a
-                      v-if="recentDelted"
+                      v-if="recentDelted && (isSupplierManager || isAdmin || isBuyingLead || isInternalBuyer || isManager)"
                       href="javascript:void(0)"
                       class="text-primary d-none d-lg-block d-md-block d-xl-block"
-                      v-b-modal.modal-prevent-update
+                      @click="showAllUpdateModal"
                     >Update Selected</a>
                   </div>
-                  <table class="table product-details d-none d-lg-block d-md-block d-xl-block" aria-describedby="Order details">
+                  <table
+                    class="table product-details d-none d-lg-block d-md-block d-xl-block"
+                    aria-describedby="Order details"
+                  >
                     <thead class="thead-light">
                       <tr>
-                        <th scope="col" class="pt-0 pb-0 pr-0">
+                        <th
+                          v-if="isSupplierManager || isAdmin || isBuyingLead || isInternalBuyer || isManager"
+                          scope="col" class="pt-0 pb-0 pr-0">
                           <div class="custom-control custom-checkbox">
                             <input
                               type="checkbox"
@@ -189,19 +225,85 @@
                       </tr>
                     </thead>
                     <tbody>
-                      <tr v-for="(product, index) in order.products" :key="product.id">
-                        <td>
+                      <tr
+                        v-for="(request, index) in requests"
+                        :key="index"
+                        >
+                        <td v-if="isSupplierManager || isAdmin || isBuyingLead || isInternalBuyer || isManager">
                           <label class="custom-check">
                             <input
                               type="checkbox"
-                              v-bind:value="product"
+                              :value="request"
                               v-model="selectcheck"
                               @change="updateCheckall()"
                             />
                             <span class="checkmark"></span>
                           </label>
                         </td>
-                        <td>{{ index + 1 }}</td>
+                        <td>{{request.slNo}}</td>
+                        <td>
+                          <p class="text-black fw-500">{{ request.description }}</p>
+                          <p class="text-black">{{ request.cas }}</p>
+                          <p class="text-black">{{ request.purity }} Pure</p>
+                          <p class="text-black" v-if="request.packsize">Pack Size: {{ request.packsize }}</p>
+                        </td>
+                        <td>
+                          <p v-for="(line, index) in request.lines" :key="index">{{ line.qty }}</p>
+                          <p v-if="request.lines.length < 1">{{ request.qty }}</p>
+                        </td>
+                        <td>
+                          <p v-for="(line, index) in request.lines" :key="index">{{ line.supplier ? line.supplier : '-' }}</p>
+                        </td>
+                        <td>
+                          <div v-for="(line, index) in request.lines" :key="index">
+                            <p class="text-right">{{ order.currency.toUpperCase() }} {{ line[order.currency] > 0 ? (line[order.currency]) : '-' }}</p>
+                            <p class="fs-12 text-right" v-if="line[order.currency] > 0">INR {{ line.inr }}</p>
+                          </div>
+                        </td>
+                        <td>
+                          <div v-for="(line, index) in request.lines" :key="index">
+                            <p
+                              v-if="line[request.order.currency] > 0"
+                              class="text-right"
+                            > {{ order.currency.toUpperCase() }} {{ (line[order.currency] * line.qty) }}</p>
+                            <p
+                              v-if="line[order.currency] > 0"
+                              class="fs-12 text-right"
+                            >INR {{ (line.inr * line.qty) }}</p>
+                            <p class="text-center" v-else>-</p>
+                          </div>
+                        </td>
+                        <td>
+                          <p v-if="request.lines.length < 1">Requested SLS to order</p>
+                          <p v-if="request.lines.length > 0">Order placed</p>
+                          <div v-for="(line, index) in request.lines" :key="index">
+                            <p v-if="line.pono">PO No. {{ line.pono }}</p>
+                            <p v-if="line.prno">PR No. {{ line.prno }}</p>
+                          </div>
+                          <a
+                            v-if="isSupplierManager || isAdmin || isBuyingLead || isInternalBuyer || isManager"
+                            href="javascript:void(0)"
+                            class="text-primary"
+                            @click="showUpdateModal(request)"
+                          >
+                          <span v-if="request.lines.length < 1">Update</span>
+                          <span v-else>View/update</span>
+                          </a>
+                        </td>
+                      </tr>
+                      <tr v-for="(product, index) in products" :key="product.id">
+                        <td v-if="isSupplierManager || isAdmin || isBuyingLead || isInternalBuyer || isManager">
+                          <label class="custom-check">
+                            <input
+                              type="checkbox"
+                              :value="product"
+                              v-model="selectcheck"
+                              @change="updateCheckall()"
+                            />
+                            <span class="checkmark"></span>
+                          </label>
+                        </td>
+                        <td>{{product.slNo}}</td>
                         <td>
                           <p class="text-black fw-500">{{ product.name }}</p>
                           <p class="text-black">{{ product.cas }}</p>
@@ -211,19 +313,44 @@
                         <td>{{ product.pivot.qty }}</td>
                         <td>{{ product.supplier }}</td>
                         <td>
-                          <p class="text-right">{{ product.usd.toFixed(2) }}</p>
-                          <p class="fs-12 text-right">{{ product.inr.toFixed(2) }}</p>
+                          <p class="text-right">{{ (product[order.currency]) }}</p>
+                          <p class="fs-12 text-right">{{ product.inr }}</p>
                         </td>
                         <td>
-                          <p class="text-right">USD {{ (product.usd * product.pivot.qty).toFixed(2) }}</p>
-                          <p class="fs-12 text-right">INR {{ (product.inr * product.pivot.qty).toFixed(2) }}</p>
+                          <p
+                            class="text-right"
+                          >{{ order.currency.toUpperCase() }} {{ (product[order.currency] * product.pivot.qty) }}</p>
+                          <p
+                            class="fs-12 text-right"
+                          >INR {{ (product.inr * product.pivot.qty) }}</p>
                         </td>
                         <td>
+                          <p>Order Placed</p>
+                          <p v-if="product.pivot.pono">PO No. {{ product.pivot.pono }}</p>
+                          <p v-if="product.pivot.prno">PR No. {{ product.pivot.prno }}</p>
                           <a
+                            v-if="isSupplierManager || isAdmin || isBuyingLead || isInternalBuyer || isManager"
                             href="javascript:void(0)"
                             class="text-primary"
                             @click="showUpdateModal(product)"
-                          >View/update</a>
+                          >
+                          <span v-if="!product.pivot.pono && !product.pivot.prno">Update</span>
+                          <span v-else>View/update</span>
+                          </a>
+                        </td>
+                      </tr>
+                       <tr v-if="isCustomer">
+                        <td></td>
+                        <td colspan="4">
+                          <p class="text-black fw-500">Total</p>
+                        </td>
+                        <td colspan="3" class="text-left">
+                           <p
+                            class="text-left"
+                          > {{ order.currency.toUpperCase() }} {{ getTotal(order.currency) }}</p>
+                          <p
+                            class="fs-12 text-left"
+                          >INR {{ getTotal('inr')}}</p>
                         </td>
                       </tr>
                     </tbody>
@@ -253,7 +380,7 @@
                           v-if="recentDelted"
                           href="javascript:void(0)"
                           class="text-primary"
-                          v-b-modal.modal-prevent-update
+                          @click="showAllUpdateModal"
                         >Update Selected</a>
                       </li>
                     </ul>
@@ -277,7 +404,8 @@
                     <li
                       v-for="(history, index) in order.histories"
                       :key="index"
-                      class="list-group-item border-0 history-data pl-0">
+                      class="list-group-item border-0 history-data pl-0"
+                    >
                       <div class="d-flex">
                         <div class="history-icons">
                           <div class="circle"></div>
@@ -285,8 +413,13 @@
                         </div>
                         <div class="history-text">
                           <p class="text-black fw-500" v-html="history.message"></p>
-                          <p class="small text-order2">{{ format(history.updated_at, 'MMM DD, YYYY - HH:mm a') }}</p>
-                          <p class="text-black fw-500" v-if="history.user">{{ history.user.fname }} {{ history.user.lname }}</p>
+                          <p
+                            class="small text-order2"
+                          >{{ format(history.updated_at, 'MMM DD, YYYY - HH:mm a') }}</p>
+                          <p
+                            class="text-black fw-500"
+                            v-if="history.user"
+                          >{{ history.user.fname }} {{ history.user.lname }}</p>
                         </div>
                       </div>
                     </li>
@@ -303,13 +436,18 @@
                     <li
                       class="list-group-item"
                       v-for="(comment, index) in order.comments"
-                      :key="index">
+                      :key="comment.id"
+                    >
                       <div class="d-flex">
                         <div class="circle bg-info"></div>
                         <div class="commennt-info">
-                          <p class="small text-black fw-600">{{ comment.user.fname }} {{ comment.user.lname }}</p>
+                          <p
+                            class="small text-black fw-600"
+                          >{{ comment.user.fname }} {{ comment.user.lname }}</p>
                           <p class="small text-black">{{ comment.message }}</p>
-                          <p class="fs-12 text-order2"> {{ format(comment.updated_at, 'MMM DD, YYYY - HH:mm a') }}</p>
+                          <p
+                            class="fs-12 text-order2"
+                          >{{ format(comment.updated_at, 'MMM DD, YYYY - HH:mm a') }}</p>
                         </div>
                       </div>
                     </li>
@@ -356,7 +494,7 @@
               <button class="btn btn-link" @click="hideModal('cart-update-modal')">Cancel</button>
               <button
                 class="btn btn-primary d-none d-lg-block d-md-block d-xl-block"
-                @click="updateDeatils"
+                @click="updateDetails"
               >Submit</button>
             </div>
           </div>
@@ -398,7 +536,7 @@
               </div>
               <div class="d-block d-md-none d-lg-none">
                 <div v-if="RequestList!== null">
-                  <div v-for="request in RequestList" :key="request.id">
+                  <div v-for="(request, index) in RequestList" :key="index">
                     <div class="row no-gutters justify-content-between">
                       <div class="d-flex">
                         <p class="text-black fw-600">{{request.id}}</p>
@@ -410,7 +548,7 @@
                         <a class="text-primary" @click="hideRequestCard">
                           <span v-if="!hideCard">View Details</span>
                           <span v-if="hideCard">Hide Details</span>
-                          </a>
+                        </a>
                       </div>
                     </div>
                   </div>
@@ -422,11 +560,11 @@
                 <div v-if="RequestList!== null">
                   <div
                     class="row no-gutters border-bottom"
-                    v-for="request in RequestList"
-                    :key="request.id"
+                    v-for="(request, index) in RequestList"
+                    :key="index"
                   >
                     <div class="col-md-1">
-                      <div class="d-none d-lg-block d-md-block d-xl-block">{{request.id}}</div>
+                      <div class="d-none d-lg-block d-md-block d-xl-block">{{index + 1}}</div>
                     </div>
                     <div class="col-md-2">
                       <div class="d-none d-lg-block d-md-block d-xl-block">
@@ -434,19 +572,23 @@
                         <p class="text-black">Pack Size: {{request.packsize}}</p>
                       </div>
                     </div>
-                    <div class="col-md-9">
-                      <div class="row">
+
+                    <div class="col-md-9" v-if="request.lines">
+                      <div class="row" v-for="(line, index) in request.lines" :key="index">
                         <div class="col-6 col-md-2">
                           <input
-                            v-model="request.pivot.qty"
+                            v-model="line.qty"
                             name="quantity"
                             type="text"
                             class="form-control input-sm"
+                            @input="checkQtyAvailability(request)"
+                            :class="request.invalidQty ? 'is-invalid' : ''"
+                            :state="!request.invalidQty ? false : true"
                           />
                         </div>
                         <div class="col-6 col-sm-6 col-md-2">
                           <input
-                            v-model="request.supplier"
+                            v-model="line.supplier"
                             name="supplier"
                             type="text"
                             class="form-control input-sm"
@@ -454,44 +596,56 @@
                         </div>
                         <div class="col-6 col-sm-6 col-md-2">
                           <input
-                            v-model="request.usd"
-                            name="usd"
+                            v-model="line[order.currency]"
+                            :name="order.currency"
                             type="text"
+                            @input="updateInr(request)"
                             class="form-control input-sm"
                           />
-                          <p class="text-right tex-order1 fs-12">in INR : {{ request.inr.toFixed(2) }}</p>
+                          <p
+                            class="text-right tex-order1 fs-12"
+                          >in INR : {{ line.inr }}</p>
                         </div>
                         <div class="col-6 col-sm-6 col-md-2">
                           <input
-                            :value="(request.pivot.qty * request.usd).toFixed(2)"
+                            :value="(line.qty * line[order.currency])"
                             name="subprice"
                             type="text"
                             class="form-control input-sm"
+                            :disabled="true"
                           />
-                          <p class="text-right text-order1 fs-12">in INR : {{ (request.pivot.qty * request.inr).toFixed(2) }}</p>
+                          <p
+                            class="text-right text-order1 fs-12"
+                          >in INR : {{ (line.qty * line.inr) }}</p>
                         </div>
                         <div class="col-6 col-sm-6 col-md-2">
                           <input
-                            v-model="request.prno"
-                            name="product_request_number"
+                            v-model="line.prno"
+                            name="prno"
                             type="text"
                             class="form-control input-sm"
                           />
                         </div>
                         <div class="col-6 col-sm-6 col-md-2">
                           <input
-                            v-model="request.pono"
-                            :name="product_order_number"
+                            v-model="line.pono"
+                            name="pono"
                             type="text"
                             class="form-control input-sm"
                           />
+                          <a
+                            @click="removeProductLine(request, index)"
+                            href="javascript:void(0)"
+                            class="text-primary fs-14"
+                          ><b-icon icon="trash-fill" aria-hidden="true"></b-icon></a>
                         </div>
                       </div>
+
                       <div class="row">
                         <div class="col-6 offset-md-8 col-md-2">
                           <div class="form-group float-right m-0">
                             <a
-                              @click="addPR()"
+                              @click="addProductLine(request)"
                               href="javascript:void(0)"
                               class="text-primary fs-14"
                             >Add PR</a>
@@ -500,7 +654,7 @@
                         <div class="col-6 col-sm-6 col-md-2">
                           <div class="form-group float-right m-0">
                             <a
-                              @click="addExperience()"
+                              @click="addProductLine(request)"
                               href="javascript:void(0)"
                               class="text-primary fs-14"
                             >Add PO</a>
@@ -508,6 +662,75 @@
                         </div>
                       </div>
                     </div>
+
+                    <div class="col-md-9" v-if="!request.lines">
+                      <div class="row">
+                        <div class="col-6 col-md-2">
+                          <input
+                            v-model="request.pivot.qty"
+                            name="quantity"
+                            type="text"
+                            class="form-control input-sm"
+                            :disabled="true"
+                            :min="1"
+                            @input="checkQtyAvailability(request)"
+                            :class="request.invalidQty ? 'is-invalid' : ''"
+                            :state="!request.invalidQty ? false : true"
+                          />
+                        </div>
+                        <div class="col-6 col-sm-6 col-md-2">
+                          <input
+                            v-model="request.supplier"
+                            name="supplier"
+                            type="text"
+                            class="form-control input-sm"
+                            :disabled="true"
+                          />
+                        </div>
+                        <div class="col-6 col-sm-6 col-md-2">
+                          <input
+                            v-model="request[order.currency]"
+                            :name="order.currency"
+                            type="text"
+                            @input="updateInr(request)"
+                            class="form-control input-sm"
+                            :disabled="true"
+                          />
+                          <p
+                            class="text-right tex-order1 fs-12"
+                          >in INR : {{ request.inr }}</p>
+                        </div>
+                        <div class="col-6 col-sm-6 col-md-2">
+                          <input
+                            :value="(request.pivot.qty * request[order.currency])"
+                            name="subprice"
+                            type="text"
+                            class="form-control input-sm"
+                            :disabled="true"
+                          />
+                          <p
+                            class="text-right text-order1 fs-12"
+                          >in INR : {{ (request.pivot.qty * request.inr) }}</p>
+                        </div>
+                        <div class="col-6 col-sm-6 col-md-2">
+                          <input
+                            v-model="request.pivot.prno"
+                            name="prno"
+                            type="text"
+                            class="form-control input-sm"
+                          />
+                        </div>
+                        <div class="col-6 col-sm-6 col-md-2">
+                          <input
+                            v-model="request.pivot.pono"
+                            name="pono"
+                            type="text"
+                            class="form-control input-sm"
+                          />
+                        </div>
+                      </div>
+                    </div>
+
                   </div>
                 </div>
               </div>
@@ -519,11 +742,12 @@
         </div>
       </b-modal>
     </div>
+
     <!-- bl assign modal view -->
     <div>
       <b-modal
         id="modal-prevent-closing"
-        ref="my-modal"
+        ref="update-order-status-modal"
         title="Submit Your Name"
         size="sm"
         centered
@@ -534,8 +758,8 @@
           <b-form-radio-group v-model="selected" :options="options" name="radios-stacked" stacked></b-form-radio-group>
         </b-form-group>
         <div class="float-right">
-          <button class="btn btn-link" @click="hideModal">Cancel</button>
-          <button class="btn btn-primary" @click="showModal">Ok</button>
+          <button class="btn btn-link" @click="hideModal('cart-update-modal')">Cancel</button>
+          <button class="btn btn-primary" @click="updateStatus">Ok</button>
         </div>
       </b-modal>
     </div>
@@ -564,8 +788,16 @@
           </template>
         </b-form-select>
         <div class="float-right pt-20">
-          <button class="btn btn-link" type="reset" @click="hideModal('project-manager-modal')">Cancel</button>
-          <button class="btn btn-primary" type="submit" @click="changeOrderDetails(order, 'project-manager', 'project-manager-modal')">Ok</button>
+          <button
+            class="btn btn-link"
+            type="reset"
+            @click="hideModal('project-manager-modal')"
+          >Cancel</button>
+          <button
+            class="btn btn-primary"
+            type="submit"
+            @click="changeOrderDetails(order, 'project-manager', 'project-manager-modal')"
+          >Ok</button>
         </div>
       </b-modal>
     </div>
@@ -595,7 +827,11 @@
         </b-form-select>
         <div class="float-right pt-20">
           <button class="btn btn-link" type="reset" @click="hideModal('buying-lead-modal')">Cancel</button>
-          <button class="btn btn-primary" type="submit" @click="changeOrderDetails(order, 'buying-lead', 'buying-lead-modal')">Ok</button>
+          <button
+            class="btn btn-primary"
+            type="submit"
+            @click="changeOrderDetails(order, 'buying-lead', 'buying-lead-modal')"
+          >Ok</button>
         </div>
       </b-modal>
     </div>
@@ -609,7 +845,7 @@
         hide-header
         hide-footer
       >
-        <p class="fw-600 pt-10 pb-10">Assign Buying Lead</p>
+        <p class="fw-600 pt-10 pb-10">Assign Internal Buyer</p>
         <b-form-select
           :searchable="false"
           v-model="order.internal_buyer_id"
@@ -624,8 +860,16 @@
           </template>
         </b-form-select>
         <div class="float-right pt-20">
-          <button class="btn btn-link" type="reset" @click="hideModal('internal-buyer-modal')">Cancel</button>
-          <button class="btn btn-primary" type="submit" @click="changeOrderDetails(order, 'internal-buyer', 'internal-buyer-modal')">Ok</button>
+          <button
+            class="btn btn-link"
+            type="reset"
+            @click="hideModal('internal-buyer-modal')"
+          >Cancel</button>
+          <button
+            class="btn btn-primary"
+            type="submit"
+            @click="changeOrderDetails(order, 'internal-buyer', 'internal-buyer-modal')"
+          >Ok</button>
         </div>
       </b-modal>
     </div>

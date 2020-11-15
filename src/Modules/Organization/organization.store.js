@@ -1,25 +1,18 @@
 /* eslint no-shadow: ["error", { "allow": ["state"] }] */
+import OrganizationService from '@/Modules/Organization/organization.service'
 
-import Organization from '@/Modules/Organization/organization.model'
-
-const stateData = {
-  organizations: null
-}
+const stateData = {}
 
 const mutations = {}
 
-const actions = {
-  async setOrganization ({ commit, payload }, organization) {
-    console.log(organization)
-  }
-}
+const actions = {}
 
 const getters = {
-  getOrganization: (state) => (organization) => {
-    return Organization.query().where('email', organization.email).first()
+  getOrganization: (state) => (email) => {
+    return OrganizationService.verifyOrganization(email)
   },
   getOrganizationIdByEmail: (state) => (email) => {
-    return Organization.query().where('email', email).first().id
+    return OrganizationService.getOrganizationIdByEmail(email)
   }
 }
 

@@ -1,15 +1,11 @@
-import analytic from '@/mixins/analytic'
+import requestFields from '@/mixins/request-table-fields'
 
 export default {
-  mixins: [analytic],
+  middleware: ['auth', 'analytic'],
+  mixins: [requestFields],
   data () {
     return {
       type: 'completed'
     }
-  },
-  async mounted () {
-    this.fetchOrders()
-    // Set the initial number of orders
-    this.totalRows = this.orders.length
   }
 }

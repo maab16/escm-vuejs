@@ -1,10 +1,9 @@
 /* eslint no-shadow: ["error", { "allow": ["state"] }] */
 
 import Cookies from 'js-cookie'
-import User from '@/Modules/User/user.model'
+import UserService from '@/Modules/User/user.service'
 import * as types from './mutation-types'
-import emailjs from 'emailjs-com'
-emailjs.init('user_JwIHhf5su4OZ9muYnGiuQ')
+// import NotificationService from '@/Modules/Notification/notification.service'
 
 const stateData = {
   user: localStorage.getItem('user') != null
@@ -17,7 +16,7 @@ const mutations = {
   [types.SET_USER] (state, payload) {
     state.user = payload
     // Cookies.set('user', JSON.stringify(payload), { expires: 365 })
-    localStorage.setItem('user', JSON.stringify(payload))
+    // localStorage.setItem('user', JSON.stringify(payload))
   },
   [types.SET_OTP] (state, payload) {
     state.otp = Number(payload)
@@ -49,22 +48,14 @@ const actions = {
     //   company_name: 'eSCM',
     //   reply_to: 'no-reply@escm.com'
     // }
-
-    // const email = await emailjs.send(
-    //   'service_kk1pvue',
-    //   'otp_template_6aymo19',
-    //   data
-    // )
+    // NotificationService.send('otp', data)
     commit(types.SET_OTP, otp)
   },
   async createNewUser ({commit}, payload) {
-    User.insert({
-      data: payload
-    })
-    localStorage.setItem('users', JSON.stringify(User.query().all()))
+    UserService.createUser(payload)
   },
   async loginInternalUser ({commit}, email) {
-    return User.query().where('email', email).exists() ? true : false
+    return UserService.verifyInternalUser(email)
   },
   async logout ({commit}) {
     commit(types.LOGOUT)
@@ -73,7 +64,7 @@ const actions = {
     commit(types.SET_OTP, null)
   },
   setUserData ({commit}, email) {
-    let user = User.query().withAll().where('email', email).first()
+    let user = UserService.setUser(email)
     commit(types.SET_USER, user)
   }
 }
@@ -177,13 +168,13 @@ const getters = {
       return state.user
     }
 
-    return User.query().where('email', email).first()
+    return UserService.getByEmail(email)
   },
-  getUserByEmailWithOrganuization: (state) => (email) => {
-    return User.query().with('organization').where('email', email).first()
+  getUserByEmailWithOrganization: (state) => (email) => {
+    return UserService.getByEmail(email)
   },
   getMaxId: (state) => {
-    return User.query().max('id')
+    return UserService.getMaxId()
   },
   getOTP: (state) => {
     return state.otp

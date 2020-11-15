@@ -5,7 +5,7 @@
         <b-form-group class="mb-0 order-search-filter">
           <b-input-group size="md">
             <b-form-input
-              v-model="updateList"
+              v-model="search"
               type="search"
               id="filterInput"
               placeholder="Search"
@@ -15,7 +15,7 @@
       </div>
     </b-jumbotron>
       <div class="container pt-30">
-        <app-Updates></app-Updates>
+        <app-Updates type="all" :filter="search"></app-Updates>
       </div>
   </div>
 </template>

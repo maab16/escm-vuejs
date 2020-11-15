@@ -1,7 +1,7 @@
 /* eslint no-shadow: ["error", { "allow": ["state"] }] */
 
 import * as types from './mutation-types'
-import Role from './role.model'
+import RoleService from './role.service'
 
 const stateData = {
   roles: []
@@ -14,7 +14,7 @@ const mutations = {
 
 const actions = {
   async fetchRoles ({commit}) {
-    let roles = Role.query().withAll().get()
+    let roles = RoleService.getRoles()
     commit(types.FETCH_ROLES, roles)
   }
 }

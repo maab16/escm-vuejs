@@ -272,6 +272,7 @@ export default {
     await this.setPopularProducts()
     await this.setCompanyDistributionData()
     await this.setUnavailableProducts()
+    await this.setCompanyDataByBuyer()
     this.customers = this.customerOrders
   },
   methods: {

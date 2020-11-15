@@ -37,7 +37,7 @@ export default [
   {
     id: 4,
     user_id: 3,
-    order_id: 2,
+    order_id: 7,
     cas: '7784-23-8',
     qty: 5,
     purity: '90%',
@@ -48,7 +48,7 @@ export default [
   {
     id: 5,
     user_id: 3,
-    order_id: 11,
+    order_id: 10,
     cas: '13473-90-0',
     qty: 3,
     purity: '70%',
@@ -59,7 +59,7 @@ export default [
   {
     id: 6,
     user_id: 3,
-    order_id: 11,
+    order_id: 7,
     cas: '7784-23-8',
     qty: 5,
     purity: '90%',

@@ -16,7 +16,7 @@
               <p class="text-order2 fs-14">{{placelist.packsize}} x {{ placelist.qty }}</p>
             </div>
             <div class="text-right">
-              <p>USD {{ (placelist.usd * (placelist.qty > 1 ? placelist.qty : 1)).toFixed(2)}}</p>
+              <p> {{ currency.toUpperCase() }} {{ (placelist[currency] * (placelist.qty > 1 ? placelist.qty : 1)).toFixed(2)}}</p>
               <p class="text-order2 fs-14">In INR {{ (placelist.inr * (placelist.qty > 1 ? placelist.qty : 1)).toFixed(2)}}</p>
             </div>
           </div>

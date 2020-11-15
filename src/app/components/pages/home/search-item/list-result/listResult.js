@@ -66,7 +66,8 @@ export default {
   },
   methods: {
     ...mapActions('cart', [
-      'addCart'
+      'addCart',
+      'removeCart'
     ]),
     ...mapActions('product', [
       'setAdvancedOptions'
@@ -96,7 +97,7 @@ export default {
       this.items = items.map(item => {
         item.isCart = false
         this.carts.forEach(cart => {
-          if (cart.id == item.id) {
+          if (cart.id === item.id) {
             item.isCart = true
             item.qty = cart.qty
           }
@@ -124,6 +125,10 @@ export default {
       this.addCart(item)
       this.filterCartItems()
       this.dismissCountDown = this.dismissSecs
+    },
+    removeFromCart (item) {
+      this.removeCart(item)
+      this.filterCartItems()
     },
     viewCart () {
       this.$router.push({name: 'cart'})
