@@ -1,6 +1,6 @@
 <template>
-  <div>
-    <div class="container">
+  <div v-if="!isCustomer">
+    <div class="container" v-if="orders.length > 0">
       <div class="order-filter-header">
         <p class="small mb-2">Last updated March 8th,2020; 19:00</p>
         <b-form-group class="mb-0 order-search-filter">
@@ -30,68 +30,68 @@
         >
           <b-form @submit="onSubmit" @reset="onReset">
             <div class="row">
-              <div class="col-md-6 col-lg-3">
+              <div class="col-md-6 col-lg-3" v-if="!isCustomer">
                 <b-form-group id="input-group-3" label="Customer :" label-for="input-3">
-                  <v-select
+                  <b-form-select
                     :searchable="false"
-                    v-model="form.Customer"
+                    v-model="customer"
                     placeholder="Select Customer"
-                    :options="Customer"
+                    :options="customers"
                   >
                     <template #open-indicator="{ attributes }">
                       <span v-bind="attributes">
                         <em class="sls-icons sls-16 arrow"></em>
                       </span>
                     </template>
-                  </v-select>
+                  </b-form-select>
                 </b-form-group>
               </div>
-              <div class="col-md-6 col-lg-3">
+              <div class="col-md-6 col-lg-3" v-if="!isManager && !isCustomer">
                 <b-form-group id="input-group-4" label="Project Manager :" label-for="input-4">
-                  <v-select
+                  <b-form-select
                     :searchable="false"
-                    v-model="form.Pmanager"
+                    v-model="projectManager"
                     placeholder="Select Project Manager"
-                    :options="Pmanager"
+                    :options="projectManagers"
                   >
                     <template #open-indicator="{ attributes }">
                       <span v-bind="attributes">
                         <em class="sls-icons sls-16 arrow"></em>
                       </span>
                     </template>
-                  </v-select>
+                  </b-form-select>
                 </b-form-group>
               </div>
-              <div class="col-md-6 col-lg-3">
+              <div class="col-md-6 col-lg-3" v-if="!isBuyingLead && !isCustomer">
                 <b-form-group id="input-group-5" label="Buying Lead :" label-for="input-5">
-                  <v-select
+                  <b-form-select
                     :searchable="false"
-                    v-model="form.Buying"
+                    v-model="buyingLead"
                     placeholder="Select Buying Lead"
-                    :options="Buying"
+                    :options="buyingLeads"
                   >
                     <template #open-indicator="{ attributes }">
                       <span v-bind="attributes">
                         <em class="sls-icons sls-16 arrow"></em>
                       </span>
                     </template>
-                  </v-select>
+                  </b-form-select>
                 </b-form-group>
               </div>
-              <div class="col-md-6 col-lg-3">
+              <div class="col-md-6 col-lg-3" v-if="isSupplierManager || isAdmin || isBuyingLead">
                 <b-form-group id="input-group-6" label="Internal Buyer :" label-for="input-6">
-                  <v-select
+                  <b-form-select
                     :searchable="false"
-                    v-model="form.Internal"
+                    v-model="internalBuyer"
                     placeholder="Select Internal Buyer"
-                    :options="Internal"
+                    :options="internalBuyers"
                   >
                     <template #open-indicator="{ attributes }">
                       <span v-bind="attributes">
                         <em class="sls-icons sls-16 arrow"></em>
                       </span>
                     </template>
-                  </v-select>
+                  </b-form-select>
                 </b-form-group>
               </div>
               <div class="col-md-6 col-lg-3">
@@ -101,7 +101,8 @@
                     id="datepicker-dateformat2"
                     :date-format-options="{ year: 'numeric', month: 'numeric', day: 'numeric' }"
                     locale="en"
-                    v-model="form.from"
+                    v-model="from"
+                    :max="to"
                     :hide-header="true"
                   ></b-form-datepicker>
                 </div>
@@ -113,7 +114,8 @@
                     id="datepicker-dateformat3"
                     :date-format-options="{ year: 'numeric', month: 'numeric', day: 'numeric' }"
                     locale="en"
-                    v-model="form.to"
+                    v-model="to"
+                    :min="from"
                     :hide-header="true"
                   ></b-form-datepicker>
                 </div>
@@ -151,7 +153,7 @@
               <template v-slot:cell(cas)="data">
                 <p class="d-none d-lg-block d-md-block d-xl-block">{{ data.value }}</p>
               </template>
-              <template v-slot:cell(product)="data">
+              <template v-slot:cell(description)="data">
                 <div class="d-none d-lg-block d-md-block d-xl-block tooltip-data">
                   <span class="tolltip-data">{{ data.value }}</span>
                   <span class="tooltiptext">{{ data.value }}</span>
@@ -160,40 +162,62 @@
               <template v-slot:cell(qty)="data">
                 <p class="d-none d-lg-block d-md-block d-xl-block">{{ data.value }}</p>
               </template>
+              <template v-slot:cell(customer)="row">
+                <div class="d-none d-lg-block d-md-block d-xl-block tooltip-data">
+                  <span class="tolltip-data">{{ row.item.user.organization.name }}</span>
+                  <span class="tooltiptext">{{ row.item.user.organization.name }}</span>
+                </div>
+              </template>
               <template v-slot:cell(user)="data">
                 <div class="d-none d-lg-block d-md-block d-xl-block tooltip-data">
                   <span class="tolltip-data">{{ data.value.fname }} {{ data.value.lname }}</span>
                   <span class="tooltiptext">{{ data.value.fname }} {{ data.value.lname }}</span>
                 </div>
               </template>
+              <template v-slot:cell(buying_lead)="row">
+                <div class="d-none d-lg-block d-md-block d-xl-block tooltip-data">
+                  <span class="tolltip-data" v-if="row.item.order.buying_lead">{{ row.item.order.buying_lead.fname }} {{ row.item.order.buying_lead.lname }}</span>
+                  <span class="tooltiptext" v-if="row.item.order.buying_lead">{{ row.item.order.buying_lead.fname }} {{ row.item.order.buying_lead.lname }}</span>
+                </div>
+              </template>
+              <template v-slot:cell(manager)="row">
+                <div class="d-none d-lg-block d-md-block d-xl-block tooltip-data">
+                  <span class="tolltip-data" v-if="row.item.order.manager">{{ row.item.order.manager.fname }} {{ row.item.order.manager.lname }}</span>
+                  <span class="tooltiptext" v-if="row.item.order.manager">{{ row.item.order.manager.fname }} {{ row.item.order.manager.lname }}</span>
+                </div>
+              </template>
+              <template v-slot:cell(internal_buyer)="row">
+                <div class="d-none d-lg-block d-md-block d-xl-block tooltip-data">
+                  <span class="tolltip-data" v-if="row.item.order.internal_buyer">{{ row.item.order.internal_buyer.fname }} {{ row.item.order.internal_buyer.lname }}</span>
+                  <span class="tooltiptext" v-if="row.item.order.internal_buyer">{{ row.item.order.internal_buyer.fname }} {{ row.item.order.internal_buyer.lname }}</span>
+                </div>
+              </template>
               <template v-slot:cell(order_id)="data">
                 <router-link class="d-none d-lg-block d-md-block d-xl-block" :to="'/order/order-detail/' + data.value">{{ data.value }}</router-link>
               </template>
-              <template v-slot:cell(created_at)="data">
+              <template v-slot:cell(created_at)="row">
                 <div class="d-none d-lg-block d-md-block d-xl-block">
                   <div class="status-icons d-flex justify-content-between">
-                    <p>{{ format(data.value, 'MMM DD, YY') }}</p>
+                    <p>{{ format(row.item.created_at, 'MMM DD, YY') }}</p>
+                    <div class="text-right">
+                      <b-dropdown
+                        size="sm"
+                        dropleft
+                        text="Drop-Left"
+                        variant="link"
+                        toggle-class="text-decoration-none"
+                        no-caret
+                        class="p-0"
+                      >
+                        <template v-slot:button-content class="p-0">
+                          <em class="sls-icons sls-24 order-details"></em>
+                        </template>
+                        <b-nav-item>
+                          <router-link class="dropdown-item" :to="'/order/order-detail/' + row.item.order.id">View Details</router-link>
+                        </b-nav-item>
+                      </b-dropdown>
+                    </div>
                   </div>
-                </div>
-              </template>
-              <template v-slot:cell(actions)="data">
-                <div class="text-right">
-                  <b-dropdown
-                    size="sm"
-                    dropleft
-                    text="Drop-Left"
-                    variant="link"
-                    toggle-class="text-decoration-none"
-                    no-caret
-                    class="p-0"
-                  >
-                    <template v-slot:button-content class="p-0">
-                      <em class="sls-icons sls-24 order-details"></em>
-                    </template>
-                    <b-nav-item>
-                      <router-link class="dropdown-item" :to="'/order/order-detail/' + data.value.id">View Details</router-link>
-                    </b-nav-item>
-                  </b-dropdown>
                 </div>
               </template>
             </b-table>
@@ -217,6 +241,17 @@
               ></b-pagination>
             </div>
           </div>
+        </div>
+      </div>
+    </div>
+    <div class="container" v-else>
+      <div class="no-orders align-items-center justify-content-around">
+        <div class="text-center">
+          <img src="~@/assets/images/noorders.svg" alt="noorders" style="width: 50%;max-width: 100%;display: block;margin: 0px auto;" />
+        </div>
+        <div class="text-center pt-30">
+          <p class="fw-500 pb-15">You have no orders to display. Start placing orders now!</p>
+          <router-link class="btn btn-primary" to="home">order now</router-link>
         </div>
       </div>
     </div>

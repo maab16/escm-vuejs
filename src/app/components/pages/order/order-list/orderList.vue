@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="container">
+    <div class="container" v-if="ordersList.length > 0">
       <div class="order-filter-header">
         <p class="small">Last updated March 8th,2020; 19:00</p>
         <div class="row">
@@ -120,7 +120,7 @@
                   </b-form-select>
                 </b-form-group>
               </div>
-              <div v-if="!isCustomer" class="col-md-6 col-lg-3">
+              <div v-if="isSupplierManager || isAdmin || isBuyingLead || isInternalBuyer" class="col-md-6 col-lg-3">
                 <b-form-group id="input-group-4" label="Project Manager :" label-for="input-4">
                   <b-form-select
                     :searchable="false"
@@ -136,7 +136,7 @@
                   </b-form-select>
                 </b-form-group>
               </div>
-              <div v-if="!isCustomer" class="col-md-6 col-lg-3">
+              <div v-if="isSupplierManager || isAdmin" class="col-md-6 col-lg-3">
                 <b-form-group id="input-group-5" label="Buying Lead :" label-for="input-5">
                   <b-form-select
                     :searchable="false"
@@ -152,7 +152,7 @@
                   </b-form-select>
                 </b-form-group>
               </div>
-              <div v-if="!isCustomer" class="col-md-6 col-lg-3">
+              <div v-if="isSupplierManager || isAdmin || isBuyingLead" class="col-md-6 col-lg-3">
                 <b-form-group id="input-group-6" label="Internal Buyer :" label-for="input-6">
                   <b-form-select
                     :searchable="false"
@@ -176,6 +176,7 @@
                     :date-format-options="{ year: 'numeric', month: 'numeric', day: 'numeric' }"
                     locale="en"
                     v-model="from"
+                    :max="to"
                     :hide-header="true"
                   ></b-form-datepicker>
                 </div>
@@ -188,6 +189,7 @@
                     :date-format-options="{ year: 'numeric', month: 'numeric', day: 'numeric' }"
                     locale="en"
                     v-model="to"
+                    :min="from"
                     :hide-header="true"
                   ></b-form-datepicker>
                 </div>
@@ -220,7 +222,7 @@
               :sort-direction="sortDirection"
               @filtered="onFiltered"
               :items="ordersList"
-              :fields="isCustomer ? customer_fields : fielast_namelds"
+              :fields="isCustomer ? customer_fields : fields"
             >
               <template v-slot:cell(id)="data">
                 <a class="d-none d-lg-block d-md-block d-xl-block fs-16" href="javascript:void(0)">
@@ -280,7 +282,7 @@
                   </div>
                 </div>
               </template>
-              <template v-slot:cell(meta)="data">
+              <template v-slot:cell(meta)="row">
                 <div class="">
                   <b-dropdown
                     size="sm"
@@ -295,7 +297,7 @@
                       <em class="sls-icons sls-24 order-details"></em>
                     </template>
                     <b-nav-item>
-                      <router-link class="dropdown-item" :to="'/order/order-detail/' + data.value.id">View Details</router-link>
+                      <router-link class="dropdown-item" :to="'/order/order-detail/' + row.item.id">View Details</router-link>
                     </b-nav-item>
                   </b-dropdown>
                 </div>
@@ -321,6 +323,17 @@
               ></b-pagination>
             </div>
           </div>
+        </div>
+      </div>
+    </div>
+    <div class="container" v-else>
+      <div class="no-orders align-items-center justify-content-around">
+        <div class="text-center">
+          <img src="~@/assets/images/noorders.svg" alt="noorders" style="width: 50%;max-width: 100%;display: block;margin: 0px auto;" />
+        </div>
+        <div class="text-center pt-30">
+          <p class="fw-500 pb-15">You have no orders to display. Start placing orders now!</p>
+          <router-link class="btn btn-primary" to="home">order now</router-link>
         </div>
       </div>
     </div>

@@ -41,6 +41,10 @@ export default {
         label: 'Status',
         sortable: false
       },
+      {
+        key: 'meta',
+        label: ''
+      },
       { key: 'actions', label: 'Actions' }
       ]
     }

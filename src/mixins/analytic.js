@@ -57,6 +57,7 @@ export default {
       'getUnavailableProductsByMonth',
       'getInternalBuyerOrdersByMonth',
       'getUnavailableProducts',
+      'getBuyerCompanyData',
       'customerOrders',
       'successfulOrders',
       'slsOrders',
@@ -103,6 +104,7 @@ export default {
       'setCompanyDistributionData',
       'setUnavailableOrdersByMonth',
       'setInternalBuyerOrdersByMonth',
+      'setCompanyDataByBuyer',
       'setUnavailableProducts',
       'setOrdersByStatus',
       'setSuccessfulOrders',
@@ -148,12 +150,6 @@ export default {
     sortfilter () {
       this.filterSection = false
     },
-    /**
-     *click away filtersearch
-     */
-    filterSearch () {
-      this.filterSection = !this.filterSection
-    },
     count (array) {
       let counts = array.reduce((out, {
         status
@@ -165,6 +161,12 @@ export default {
         status: key,
         count: counts[key]
       }))
+    },
+    /**
+     *click away filtersearch
+     */
+    filterSearch () {
+      this.filterSection = !this.filterSection
     },
     onFiltered (filteredItems) {
       // Trigger pagination to update the number of buttons/pages due to filtering

@@ -18,14 +18,12 @@ export default {
   },
   methods: {
     ...mapActions('order', [
-      'filterOrders',
       'setOrders',
       'makeOrder',
       'fetchOrderDetails',
       'setRecentOrders',
       'updateOrderDeatils',
-      'updateOrder',
-      'updateOrderHistory'
+      'updateOrder'
     ]),
     /**
      * Retrive Order List API Data

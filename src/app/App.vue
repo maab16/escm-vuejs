@@ -16,6 +16,7 @@ import users from '@/data/users'
 import addresses from '@/data/addresses'
 import userAddresses from '@/data/user-addresses'
 import roles from '@/data/roles'
+import buyerLead from '@/data/buyer-lead'
 import roleUser from '@/data/role-user'
 import organizations from '@/data/organizations'
 import products from '@/data/products'
@@ -24,19 +25,26 @@ import orderDetails from '@/data/orders-details'
 import requestDetails from '@/data/request-details'
 import histories from '@/data/histories'
 import comments from '@/data/comments'
+import recentUpdates from '@/data/recent-updates'
+import notifications from '@/data/notifications'
+import faqs from '@/data/faqs'
 import User from '@/Modules/User/user.model'
 import Address from '@/Modules/User/address.model'
 import UserAddress from '@/Modules/User/user-address.model'
+import BuyerLead from '@/Modules/Role/buyer-lead.model'
 import Role from '@/Modules/Role/role.model'
 import RoleUser from '@/Modules/RoleUser/role-user.model'
 import Organization from '@/Modules/Organization/organization.model'
-import Product from '@/Modules/Product/product.model'
+// import Product from '@/Modules/Product/product.model'
 import Cart from '@/Modules/Cart/cart.model'
 import Order from '@/Modules/Order/order.model'
 import OrderDetails from '@/Modules/OrderDetails/order-details.model'
 import RequestDetails from '@/Modules/RequestDetails/request-details.model'
 import History from '@/Modules/History/history.model'
 import Comment from '@/Modules/Comment/comment.model'
+import RecentUpdate from '@/Modules/RecentUpdates/recent.model'
+import Notification from '@/Modules/Notification/notification.model'
+import Faq from '@/Modules/Faq/faq.model'
 // import moment from 'moment'
 
 export default {
@@ -70,15 +78,18 @@ export default {
     if (localStorage.getItem('roles') == null) {
       localStorage.setItem('roles', JSON.stringify(roles))
     }
+    if (localStorage.getItem('buyer_lead') == null) {
+      localStorage.setItem('buyer_lead', JSON.stringify(buyerLead))
+    }
     if (localStorage.getItem('role_user') == null) {
       localStorage.setItem('role_user', JSON.stringify(roleUser))
     }
     if (localStorage.getItem('organizations') == null) {
       localStorage.setItem('organizations', JSON.stringify(organizations))
     }
-    if (localStorage.getItem('products') == null) {
-      localStorage.setItem('products', JSON.stringify(products))
-    }
+    // if (localStorage.getItem('products') == null) {
+    //   localStorage.setItem('products', JSON.stringify(products))
+    // }
     if (localStorage.getItem('orders') == null) {
       localStorage.setItem('orders', JSON.stringify(orders))
     }
@@ -94,8 +105,17 @@ export default {
     if (localStorage.getItem('comments') == null) {
       localStorage.setItem('comments', JSON.stringify(comments))
     }
+    if (localStorage.getItem('recentUpdates') == null) {
+      localStorage.setItem('recentUpdates', JSON.stringify(recentUpdates))
+    }
+    if (localStorage.getItem('notifications') == null) {
+      localStorage.setItem('notifications', JSON.stringify(notifications))
+    }
+    if (localStorage.getItem('faqs') == null) {
+      localStorage.setItem('faqs', JSON.stringify(faqs))
+    }
 
-    let carts = localStorage.getItem('carts') != null 
+    let carts = localStorage.getItem('carts') != null
       ? JSON.parse(localStorage.getItem('carts'))
       : []
 
@@ -106,11 +126,14 @@ export default {
 
     Role.insert({data: JSON.parse(localStorage.getItem('roles'))})
 
+    BuyerLead.insert({data: JSON.parse(localStorage.getItem('buyer_lead'))})
+
     RoleUser.insert({data: JSON.parse(localStorage.getItem('role_user'))})
 
     Organization.insert({data: JSON.parse(localStorage.getItem('organizations'))})
 
-    Product.insert({data: JSON.parse(localStorage.getItem('products'))})
+    // Product.insert({data: JSON.parse(localStorage.getItem('products'))})
+    this.$store.dispatch('product/setProducts', products)
 
     Order.insert({data: JSON.parse(localStorage.getItem('orders'))})
 
@@ -122,13 +145,23 @@ export default {
 
     Comment.insert({data: JSON.parse(localStorage.getItem('comments'))})
 
+    RecentUpdate.insert({data: JSON.parse(localStorage.getItem('recentUpdates'))})
+
+    Notification.insert({data: JSON.parse(localStorage.getItem('notifications'))})
+
+    Faq.insert({data: JSON.parse(localStorage.getItem('faqs'))})
+
     Cart.insert({data: carts})
   },
 
   mounted () {
-    // console.log(RoleUser.query().withAll().get())
+    // console.log(BuyerLead.all())
+    // console.log(localStorage.getItem('orders'))
+    // console.log(Order.query().withAllRecursive().get())
+    // console.log(RequestDetails.all())
+    // console.log(RecentUpdate.query().withAll().get())
     // console.log(UserAddress.all())
-    // console.log(User.all())
+    // console.log(User.query().withAllRecursive().get())
     // console.log(User.query().with('roles').where('email', 'admin@escm.com').first())
     // console.log(Role.query().with('users').where('slug', 'admin').first())
     // console.log(this.$store.getters['todo/getTotalTodos'])

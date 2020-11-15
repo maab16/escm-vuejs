@@ -61,7 +61,8 @@ export default {
       'makeOrder'
     ]),
     ...mapActions('cart', [
-      'removeAllCart'
+      'removeAllCart',
+      'setCartItems'
     ]),
     scrollFix (hashbang) {
       location.href = hashbang
@@ -88,6 +89,13 @@ export default {
       if (!this.deliveryAddress) {
         return
       }
+      this.setCartItems()
+      this.checkList.forEach(cart => {
+        if (cart.availability === 0) {
+          this.$router.push('/cart')
+        }
+      })
+
       let data = await this.makeOrder({
         'onlineProducts': this.checkList,
         'requestProducts': this.requestList

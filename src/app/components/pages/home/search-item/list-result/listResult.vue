@@ -223,7 +223,8 @@
                       </div>
                       <div class="cart-button">
                         <button v-if="!item.isCart" class="btn btn-primary" @click="addToCart(item)">Add to cart</button>
-                        <button v-else class="btn btn-primary" @click="viewCart()">View cart</button>
+                        <button v-if="item.isCart" class="btn btn-primary" @click="removeFromCart(item)">Remove from Cart</button>
+                        <button v-if="item.isCart" class="btn btn-primary" @click="viewCart()">View cart</button>
                       </div>
                     </div>
                   </div>

@@ -21,9 +21,9 @@
             </div>
             <div class="col-3 col-sm-4 col-md-2 text-right">
               <a
-                v-if="(orderList.length + requestList.length) > 0" 
-                href="javascript:void(0)" 
-                @click="emptyCart" 
+                v-if="(orderList.length + requestList.length) > 0"
+                href="javascript:void(0)"
+                @click="emptyCart"
                 class="text-primary">Empty Cart</a>
             </div>
           </div>
@@ -62,6 +62,7 @@
                   class="list-group-item border-0"
                   v-for="(item,i) in orderList"
                   :key="i"
+                  :class="{ 'request-procuct-list' : item.availability === 0 }"
                 >
                   <div class="request-space">
                     <div class="row">
@@ -126,19 +127,19 @@
                           </div>
                           <div class="col-7 col-md-6">
                             <div class="text-right">
-                              <p class="texxt-black fw-600">USD {{item.usd}}</p>
+                              <p class="texxt-black fw-600">{{ currency.toUpperCase() }} {{item[currency]}}</p>
                               <p class="small">In INR {{item.inr}}</p>
                             </div>
                           </div>
-                          <div class="request-product text-left text-lg-right error-request ml-3 ml-lg-0 mt-2 mt-lg-0" v-if="item.request">
-                            <button class="btn btn-primary" @click="showModal">Request Product</button>
+                          <div class="request-product text-left text-lg-right error-request ml-3 ml-lg-0 mt-2 mt-lg-0" v-if="item.availability === 0">
+                            <button class="btn btn-primary" @click="showModal(item)">Request Product</button>
                           </div>
                         </div>
                       </div>
                     </div>
                     <p
                       class="error-request text-danger pt-20"
-                      v-if="item.request"
+                      v-if="item.availability === 0"
                     >This item is not available any more. You can request for the product or it will be automatically discarded during the checkout.</p>
                     <div class="border-bottom w-100 pt-10 pb-10"></div>
                   </div>
@@ -219,7 +220,7 @@
                     <div class="col-md-12">
                       <p
                         class="pt-10"
-                      >Lorem ipsum is dummy text used to describe the specific requirements of this product</p>
+                      >{{ item.description }}</p>
                     </div>
                   </div>
                   <div class="border-bottom w-100 pt-10 pb-10"></div>
@@ -249,66 +250,72 @@
             <div class="col-sm-3 col-md-2 col-lg-3">
               <div class="order-header text-left">
                 <div class="order-test pb-15">
-                  <b-badge pill variant="info" class="pl-s5 pr-s5">5582-12-9</b-badge>
+                  <b-badge pill variant="info" class="pl-s5 pr-s5">{{ requestItem.cas }}</b-badge>
                 </div>
                 <div class="order-test">
-                  <h5>Calcium Oxide - CaO</h5>
-                  <p class="fw-500 pt-5s">C2H3DO2</p>
+                  <h5>{{ requestItem.name }}</h5>
+                  <p class="fw-500 pt-5s">{{ requestItem.equation }}</p>
                 </div>
               </div>
             </div>
             <div class="col-sm-9 col-md-9 col-lg-9">
               <div class="card-body">
                 <div class="row">
-                  <div class="col-6 col-sm-6 col-md-6 col-lg-3">
+                  <div class="col-6 col-sm-6 col-md-6 col-lg-6">
                     <div class="order-select-list">
                       <div class="order-select">
                         <label>Pack Size</label>
-                        <v-select
+                        <b-form-input
                           :searchable="false"
-                          v-model="gms"
-                          :options="grams"
+                          v-model="requestItem.packsize"
                           size="sm"
-                        ></v-select>
+                        ></b-form-input>
                       </div>
                     </div>
                   </div>
-                  <div class="col-6 col-sm-6 col-md-6 col-lg-2">
+                  <div class="col-6 col-sm-6 col-md-6 col-lg-6">
                     <div class="order-select-list">
                       <div class="order-select">
                         <label>Qty</label>
-                        <v-select
+                        <b-form-input
                           :searchable="false"
-                          v-model="qty"
-                          :options="Qty"
+                          v-model="requestItem.qty"
                           size="sm"
-                        ></v-select>
+                          type="number"
+                          min="1"
+                          max="99"
+                          :required="true"
+                          :state="requestItem.qty > 99 || requestItem.qty < 1 ? false : true"
+                        ></b-form-input>
                       </div>
                     </div>
                   </div>
-                  <div class="col-6 col-sm-6 col-md-6 col-lg-4">
+                  <div class="col-6 col-sm-6 col-md-6 col-lg-6">
                     <div class="order-select-list">
                       <div class="order-select">
                         <label>Delivery Time</label>
-                        <v-select
+                        <b-form-input
                           :searchable="false"
-                          v-model="days"
-                          :options="Days"
+                          v-model="requestItem.delivery"
                           size="sm"
-                        ></v-select>
+                        ></b-form-input>
                       </div>
                     </div>
                   </div>
-                  <div class="col-6 col-sm-6 col-md-6 col-lg-3">
+                  <div class="col-6 col-sm-6 col-md-6 col-lg-6">
                     <div class="order-select-list">
                       <div class="order-select">
                         <label>Purity(%)</label>
-                        <v-select
+                        <b-form-input
                           :searchable="false"
-                          v-model="purity"
-                          :options="Purity"
+                          v-model="requestItem.purity"
                           size="sm"
-                        ></v-select>
+                          type="number"
+                          min="50"
+                          max="100"
+                          :required="true"
+                          :state="requestItem.purity >= 50 && requestItem.purity <= 100 ? true : false"
+                        ></b-form-input>
                       </div>
                     </div>
                   </div>
@@ -320,12 +327,16 @@
                         rows="0"
                         class="test-order"
                         no-resize
+                        v-model="requestItem.description"
+                        :required="true"
+                        :state="!requestItem.description ? false : true"
                       ></b-form-textarea>
                     </div>
                     <div class="text-right">
                       <button
                         class="btn btn-primary pl-10 pr-10"
                         @click="requestChange"
+                        :class="{'disabled' : requestItem.qty > 99 || requestItem.qty < 1 || requestItem.purity < 50 || requestItem.purity > 100 || !requestItem.description}"
                       >Add request to cart</button>
                     </div>
                   </div>

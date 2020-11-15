@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class v-if="allitems">
+    <div class v-if="orders.length > 0">
       <div class="row">
         <div class="col-md-8 col-lg-9">
           <div class="card p-0 order-filter-list">
@@ -92,7 +92,7 @@
         </div>
       </div>
     </div>
-    <div v-if="emptyrecords">
+    <div v-else>
       <div class="no-orders d-flex align-items-center justify-content-around">
         <div>
           <img src="~@/assets/images/noorders.svg" alt="noorders" />

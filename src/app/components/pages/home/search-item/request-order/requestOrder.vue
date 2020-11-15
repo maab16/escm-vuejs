@@ -106,8 +106,13 @@
                     ></b-form-textarea>
                   </div>
                   <div class="text-right">
-                    <button v-if="!product.isCart" class="btn btn-primary pl-10 pr-10" @click="addCartRequest(product)">Add request to cart</button>
-                    <button v-else class="btn btn-primary" @click="viewCart()">View request to cart</button>
+                    <button
+                      :class="{'disabled' : product.qty > 99 || product.qty < 1 || product.purity < 50 || product.purity > 100 || !product.description}"
+                      v-if="!product.isCart"
+                      class="btn btn-primary pl-10 pr-10"
+                      @click="addCartRequest(product)">Add request to cart</button>
+                    <button v-if="product.isCart" class="btn btn-primary" @click="removeRequestFromCart(product)">Remove from Cart</button>
+                    <button v-if="product.isCart" class="btn btn-primary" @click="viewCart()">View request to cart</button>
                   </div>
                 </div>
               </div>

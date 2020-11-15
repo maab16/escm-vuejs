@@ -93,7 +93,8 @@
                   :advanced-option="advancedOption"
                   :advanced-search="advancedSearch"
                   :tags="tags"
-                  :filter-options="filterOptions"></app-filter>
+                  :filter-options="filterOptions"
+                  @reset-tags="resetTags"></app-filter>
               </div>
             </div>
           </div>

@@ -35,7 +35,8 @@ export default {
   },
   methods: {
     ...mapActions('cart', [
-      'addRequest'
+      'addRequest',
+      'removeRequestCart'
     ]),
     filterCartItems () {
       let products = [...this.requestList]
@@ -54,6 +55,10 @@ export default {
     },
     viewCart () {
       this.$router.push({name: 'cart'})
+    },
+    removeRequestFromCart (item) {
+      this.removeRequestCart(item)
+      this.filterCartItems()
     },
     /**
      *Add cart alerts

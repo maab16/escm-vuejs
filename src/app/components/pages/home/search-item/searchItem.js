@@ -3,10 +3,11 @@ import searchFilter from './search-Filter/searchFilter.vue'
 import recentPage from './recent-page/recentPage.vue'
 import listCard from './list-result/listResult.vue'
 import formCard from './request-order/requestOrder.vue'
-import { mapActions, mapGetters } from 'vuex'
+import productMixin from '@/mixins/product'
 
 export default {
   middleware: 'auth',
+  mixins: [productMixin],
   components: {
     'app-filter': searchFilter,
     'app-recentpage': recentPage,
@@ -50,19 +51,10 @@ export default {
   mounted () {
     this.options = this.products
     this.value = this.keywords
-    console.log(this.advancedOptions === undefined)
     this.advancedOption = this.advancedOptions === undefined || Object.keys(this.advancedOptions).length === 0
       ? this.advancedOption
       : this.advancedOptions
     this.filterOptions = this.getAdavacedOptions(this.value, this.advancedOption)
-
-    console.log(this.filterOptions)
-    // this.purities = options.purities
-    // this.quantities = options.quantities
-    // this.packsizes = options.packsizes
-    // this.suppliers = options.suppliers
-    // this.warehouses = options.warehouses
-    // this.deliveries = options.deliveries
   },
   /**
      *click awy directives
@@ -71,16 +63,6 @@ export default {
     onClickaway: onClickaway
   },
   computed: {
-    ...mapGetters('product', [
-      'products',
-      'getSearchProducts',
-      'isCasNumber',
-      'isSearch',
-      'getProductsByCas',
-      'keywords',
-      'advancedOptionS',
-      'getAdavacedOptions'
-    ]),
     tags: {
       get () {
         return this.value
@@ -132,12 +114,7 @@ export default {
     },
     search: function () {
       this.searchProducts(this.search)
-
       this.options = this.getSearchProducts
-      // this.getSearchProducts.map(option => {
-      //   // this.options.push(option.name)
-      //   this.options.push(option.cas)
-      // })
     },
     value: function () {
       this.filterOptions = this.getAdavacedOptions(this.value, this.advancedOption)
@@ -152,6 +129,11 @@ export default {
         }
         this.advancedSearch(options, this.value)
       }
+      let tags = this.value.filter((value, index, self) => {
+        return self.indexOf(value) === index
+      })
+
+      this.setKeywords(tags)
     },
     isSearch: function () {
       this.$refs.search.focus()
@@ -169,12 +151,6 @@ export default {
     }
   },
   methods: {
-    ...mapActions('product', [
-      'searchProducts',
-      'advancedSearchProducts',
-      'setKeywords',
-      'setAdvancedOptions'
-    ]),
     searchOnkeyup (event, addTag) {
       let tag = this.search
       let isValid = false
@@ -234,6 +210,10 @@ export default {
     removeTagItem (removeTag, tag) {
       removeTag(tag)
     },
+    resetTags () {
+      this.value = []
+      this.setKeywords(this.value)
+    },
     /**
      *select tags on list view
      */
@@ -257,112 +237,6 @@ export default {
       })
 
       return isAvailable
-    },
-    advancedSearch (options, tags, orderBy = null, orderDirection = 'desc') {
-      tags = this.value.filter((value, index, self) => {
-        return self.indexOf(value) === index
-      })
-
-      this.setKeywords(tags)
-      this.setAdvancedOptions(options)
-
-      this.advancedSearchProducts({
-        options: options,
-        tags: tags,
-        orderBy: orderBy,
-        orderDirection: orderDirection
-      })
-
-      this.searchItems = this.getSearchProducts
-
-      console.log(this.searchItems)
-
-      if (tags.length > 0) {
-        tags.map(cas => {
-          // if (this.getProductsByCas(cas).length < 1) {
-          if (!this.isCasAvailable(cas, this.searchItems)) {
-            this.searchItems.push({
-              cas: this.isCasNumber(cas) ? cas : '',
-              name: !this.isCasNumber(cas) ? cas : '',
-              supplier: options.supplier,
-              purity: options.purity,
-              qty: options.qty,
-              warehouse: options.warehouse,
-              packsize: options.packsize,
-              delivery: options.delivery,
-              availability: 0
-            })
-          }
-        })
-      }
-      
-      this.recentPage = false
-      this.disabled = true
-      this.topSearchbar = true
-      this.isAdvancedSearch = false
-      this.advanceFilter = false
-    },
-    /**
-     *search Result Function
-     */
-    searchResult (tags) {
-      let options = {
-        supplier: null,
-        purity: null,
-        qty: null,
-        warehouse: null,
-        packsize: null,
-        delivery: null
-      }
-
-      this.advancedSearch(options, tags)
-      // tags = this.value.filter((value, index, self) => {
-      //   return self.indexOf(value) === index
-      // })
-
-      // this.advancedSearchProducts({
-      //   options: options,
-      //   tags: tags
-      // })
-
-      // let items = this.getSearchProducts
-
-      // this.searchItems = items
-
-      // if (tags.length > 0) {
-      //   this.searchItems = []
-      //   tags = tags.filter(tag => {
-      //     let isTag = false
-      //     items = items.filter(product => {
-      //       if (product.name === tag || product.cas === tag) {
-      //         this.searchItems.push(product)
-      //         isTag = true
-      //         return false
-      //       }
-      //       return product
-      //     })
-
-      //     if (!isTag) {
-      //       this.searchItems.push({
-      //         cas: this.isCasNumber(tag) ? tag : '',
-      //         name: !this.isCasNumber(tag) ? tag : '',
-      //         supplier: '',
-      //         purity: '',
-      //         qty: '',
-      //         warehouse: '',
-      //         packsize: '',
-      //         delivery: '',
-      //         availability: 0
-      //       })
-      //       return tag
-      //     }
-      //   })
-      // }
-
-      this.recentPage = false
-      this.disabled = true
-      this.topSearchbar = true
-      this.isAdvancedSearch = false
     },
     recentupdates () {
       this.recentPage = true

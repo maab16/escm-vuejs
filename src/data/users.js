@@ -3,7 +3,7 @@ import moment from 'moment'
 export default [
   {
     id: 1,
-    email: 'admin@sailife.com',
+    email: 'maab.artificer@gmail.com',
     fname: 'John',
     lname: 'Doe',
     mobile: '123456789',
@@ -42,7 +42,7 @@ export default [
   },
   {
     id: 5,
-    email: 'manager1@sailife.com',
+    email: 'abuahsan08@gmail.com',
     fname: 'Kabir',
     lname: 'Hossain',
     mobile: '985654421',
@@ -60,7 +60,7 @@ export default [
   },
   {
     id: 7,
-    email: 'buyinglead1@sailife.com',
+    email: 'buyinglead2@gmail.com',
     fname: 'Abdur',
     lname: 'Rahman',
     mobile: '987955321',
@@ -69,7 +69,7 @@ export default [
   },
   {
     id: 8,
-    email: 'buyinglead2@sailife.com',
+    email: 'maab.career@gmail.com',
     fname: 'Abdul',
     lname: 'Basir',
     mobile: '988654321',
@@ -78,7 +78,7 @@ export default [
   },
   {
     id: 9,
-    email: 'buyer1@sailife.com',
+    email: 'devzone15@gmail.com',
     fname: 'Mohammad',
     lname: 'Enan',
     mobile: '987674321',
@@ -96,7 +96,7 @@ export default [
   },
   {
     id: 11,
-    email: 'head@sailife.com',
+    email: 'codexshaper@gmail.com',
     fname: 'Supplier',
     lname: 'Manager',
     mobile: '123457789',

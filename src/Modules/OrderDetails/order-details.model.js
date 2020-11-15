@@ -1,4 +1,6 @@
 import { Model } from '@vuex-orm/core'
+import Order from '@/Modules/Order/order.model'
+import Product from '@/Modules/Product/product.model'
 import moment from 'moment'
 
 const date = moment().format('YYYY-MM-DD HH:mm:ss')
@@ -13,7 +15,9 @@ class OrderDetails extends Model {
       prno: this.string(null).nullable(),
       pono: this.string(null).nullable(),
       created_at: this.string(date).nullable(),
-      updated_at: this.string(date).nullable()
+      updated_at: this.string(date).nullable(),
+      order: this.belongsTo(Order, 'order_id'),
+      product: this.belongsTo(Product, 'product_id')
     }
   }
 }

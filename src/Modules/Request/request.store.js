@@ -1,7 +1,7 @@
 /* eslint no-shadow: ["error", { "allow": ["state"] }] */
 
 import * as types from './mutation-types'
-import RequestDetails from '../RequestDetails/request-details.model'
+import RequestService from './request.service'
 
 const stateData = {
   orders: []
@@ -12,31 +12,38 @@ const mutations = {
   }
 }
 const actions = {
-  setOrders ({commit, rootGetters}) {
+  setRequests ({commit, getters, rootGetters}, option) {
     let user = rootGetters['user/user']
-    if (user != null) {
-      RequestDetails.insert({data: JSON.parse(localStorage.getItem('requestDetails'))})
-      let requests = RequestDetails.query()
-        .with('user')
-        .where('user_id', user.id)
-        .orderBy('id', 'desc')
-        .orderBy('updated_at', 'desc')
-        .get()
+    if (user) {
+      let requests = []
+      let userKey = getters.userKey
+      requests = RequestService.getRequests(userKey, user, option)
       commit(types.SET_REQUEST, requests)
       return true
     }
-
     return false
   }
 }
 
-const getters = {
-  orders: state => state.orders
+const gettersData = {
+  orders: state => state.orders,
+  userKey: (state, getters, rootState, rootGetters) => {
+    if (rootGetters['user/isManager']) {
+      return 'manager_id'
+    } else if (rootGetters['user/isBuyingLead']) {
+      return 'buying_lead_id'
+    } else if (rootGetters['user/isInternalBuyer']) {
+      return 'internal_buyer_id'
+    } else if (rootGetters['user/isCustomer']) {
+      return 'user_id'
+    }
+    return null
+  }
 }
 
 export default {
   state: stateData,
   mutations,
   actions,
-  getters
+  getters: gettersData
 }

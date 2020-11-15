@@ -13,7 +13,7 @@ export default {
       'isInternalBuyer',
       'isCustomer',
       'getUserByEmail',
-      'getUserByEmailWithOrganuization',
+      'getUserByEmailWithOrganization',
       'getMaxId',
       'getOTP',
       'getNameFromEmail',

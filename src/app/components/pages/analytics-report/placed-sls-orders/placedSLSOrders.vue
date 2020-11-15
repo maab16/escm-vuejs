@@ -53,7 +53,7 @@
                   </b-form-select>
                 </b-form-group>
               </div>
-              <div class="col-md-6 col-lg-3">
+              <div class="col-md-6 col-lg-3" v-if="!isManager">
                 <b-form-group id="input-group-4" label="Project Manager :" label-for="input-4">
                   <b-form-select
                     :searchable="false"
@@ -69,7 +69,7 @@
                   </b-form-select>
                 </b-form-group>
               </div>
-              <div class="col-md-6 col-lg-3">
+              <div class="col-md-6 col-lg-3" v-if="!isBuyingLead">
                 <b-form-group id="input-group-5" label="Buying Lead :" label-for="input-5">
                   <b-form-select
                     :searchable="false"
@@ -155,11 +155,17 @@
                 :items="orders"
                 :fields="fields"
               >
-                <template v-slot:cell(id)="data">
-                  <a
-                    class="d-none d-lg-block d-md-block d-xl-block"
-                    :href="'/order/order-detail/' + data.value"
-                  >{{ data.value }}</a>
+                <template v-slot:cell(cas)="data">
+                  <p class="d-none d-lg-block d-md-block d-xl-block">{{ data.value }}</p>
+                </template>
+                <template v-slot:cell(description)="data">
+                  <div class="d-none d-lg-block d-md-block d-xl-block tooltip-data">
+                    <span class="tolltip-data">{{ data.value }}</span>
+                    <span class="tooltiptext">{{ data.value }}</span>
+                  </div>
+                </template>
+                <template v-slot:cell(qty)="data">
+                  <p class="d-none d-lg-block d-md-block d-xl-block">{{ data.value }}</p>
                 </template>
                 <template v-slot:cell(user)="data">
                   <div class="d-none d-lg-block d-md-block d-xl-block tooltip-data">
@@ -167,37 +173,43 @@
                     <span class="tooltiptext">{{ data.value.fname }} {{ data.value.lname }}</span>
                   </div>
                 </template>
-                <template v-slot:cell(manager)="data">
+                <template v-slot:cell(customer)="row">
                   <div class="d-none d-lg-block d-md-block d-xl-block tooltip-data">
-                    <span class="tolltip-data">{{ data.value.fname }} {{ data.value.lname }}</span>
-                    <span class="tooltiptext">{{ data.value.fname }} {{ data.value.lname }}</span>
+                    <span class="tolltip-data" v-if="row.item.order.user">{{ row.item.order.user.organization.name }} {{ row.item.order.user.organization.name }}</span>
+                      <span class="tooltiptext" v-if="row.item.order.user">{{ row.item.order.user.organization.name }} {{ row.item.order.user.organization.name }}</span>
                   </div>
                 </template>
-                <template v-slot:cell(buying_lead)="data">
-                  <div class="d-none d-lg-block d-md-block d-xl-block tooltip-data">
-                    <span class="tolltip-data">{{ data.value.fname }} {{ data.value.lname }}</span>
-                    <span class="tooltiptext">{{ data.value.fname }} {{ data.value.lname }}</span>
-                  </div>
+                <template v-slot:cell(manager)="row">
+                    <div class="d-none d-lg-block d-md-block d-xl-block tooltip-data">
+                      <span class="tolltip-data" v-if="row.item.order.manager">{{ row.item.order.manager.fname }} {{ row.item.order.manager.lname }}</span>
+                      <span class="tooltiptext" v-if="row.item.order.manager">{{ row.item.order.manager.fname }} {{ row.item.order.manager.lname }}</span>
+                    </div>
+                  </template>
+                  <template v-slot:cell(buying_lead)="row">
+                    <div class="d-none d-lg-block d-md-block d-xl-block tooltip-data">
+                      <span class="tolltip-data" v-if="row.item.order.buying_lead">{{ row.item.order.buying_lead.fname }} {{ row.item.order.buying_lead.lname }}</span>
+                      <span class="tooltiptext" v-if="row.item.order.buying_lead">{{ row.item.order.buying_lead.fname }} {{ row.item.order.buying_lead.lname }}</span>
+                    </div>
+                  </template>
+                  <template v-slot:cell(internal_buyer)="row">
+                    <div class="d-none d-lg-block d-md-block d-xl-block tooltip-data">
+                      <span class="tolltip-data" v-if="row.item.order.internal_buyer">{{ row.item.order.internal_buyer.fname }} {{ row.item.order.internal_buyer.lname }}</span>
+                      <span class="tooltiptext" v-if="row.item.order.internal_buyer">{{ row.item.order.internal_buyer.fname }} {{ row.item.order.internal_buyer.lname }}</span>
+                    </div>
+                  </template>
+                  <template v-slot:cell(address)="row">
+                    <div class="d-none d-lg-block d-md-block d-xl-block tooltip-data">
+                      <span class="tolltip-data">{{ row.item.order.address.line1 }}</span>
+                      <span class="tooltiptext">{{ row.item.order.address.line1 }}</span>
+                    </div>
+                  </template>
+                <template v-slot:cell(order_id)="data">
+                  <router-link class="d-none d-lg-block d-md-block d-xl-block" :to="'/order/order-detail/' + data.value">{{data.value}}</router-link>
                 </template>
-                <template v-slot:cell(internal_buyer)="data">
-                  <div class="d-none d-lg-block d-md-block d-xl-block tooltip-data">
-                    <span class="tolltip-data">{{ data.value.fname }} {{ data.value.lname }}</span>
-                    <span class="tooltiptext">{{ data.value.fname }} {{ data.value.lname }}</span>
-                  </div>
-                </template>
-                <template v-slot:cell(address)="data">
-                  <div class="d-none d-lg-block d-md-block d-xl-block tooltip-data">
-                    <span class="tolltip-data">{{ data.value.line1 }}</span>
-                    <span class="tooltiptext">{{ data.value.line1 }}</span>
-                  </div>
-                </template>
-                <template v-slot:cell(created_at)="data">
-                  <p class="d-none d-lg-block d-md-block d-xl-block">{{ format(data.value, 'MMM DD, YYYY') }}</p>
-                </template>
-                <template v-slot:cell(status)="row">
+                <template v-slot:cell(created_at)="row">
                   <div class="d-none d-lg-block d-md-block d-xl-block">
-                    <div class="status-order d-flex justify-content-between">
-                      <p> <span class="status bg-info"></span> {{row.item.status}}</p>
+                    <div class="status-icons d-flex justify-content-between">
+                      <p>{{ format(row.item.order.created_at, 'MMM DD, YYYY') }}</p>
                       <div class="text-right">
                         <b-dropdown
                           size="sm"
@@ -212,40 +224,12 @@
                             <em class="sls-icons sls-24 order-details"></em>
                           </template>
                           <b-nav-item>
-                            <router-link
-                              class="dropdown-item"
-                              :to="'/order/order-detail/' + row.item.id"
-                            >View Details</router-link>
+                            <router-link class="dropdown-item" :to="'/order/order-detail/' + row.item.order.id">View Details</router-link>
                           </b-nav-item>
                         </b-dropdown>
                       </div>
                     </div>
                   </div>
-                </template>
-                <template v-slot:cell(actions)="row">
-                  <b-card class="d-block d-md-none d-lg-none">
-                    <router-link to="/order/order-detail/1000123456716">
-                      <div v-for="(list, key) in row" :key="key">
-                        <div class="d-flex align-items-center justify-content-between">
-                          <div class>
-                            <a
-                              class="pb-10"
-                              :href="'/order/order-detail/1000123456716'"
-                            >{{ list.orderNo }}</a>
-                            <p class="fw-500">{{list.Customers}}</p>
-                          </div>
-                          <div class="status-mobile">
-                            <p v-if="list.status" class="completed bg-info"> Successful</p>
-                            <p v-if="list.status == false" class="portical">P completed</p>
-                          </div>
-                        </div>
-                        <div class="d-flex align-items-center justify-content-between">
-                          <p>{{list.Delivery}}</p>
-                          <p>{{list.date}}</p>
-                        </div>
-                      </div>
-                    </router-link>
-                  </b-card>
                 </template>
               </b-table>
             </div>
