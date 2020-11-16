@@ -35,11 +35,11 @@ export default {
     if ((this.orderList.length + this.requestList.length) < 1) {
       this.emptycartList = true
     }
-    this.fetchCartItems()
     // this.orderList = this.carts
     // this.requestList = this.requests
   },
-  mounted () {
+  async mounted () {
+    await this.fetchCartItems()
     this.selectcheck = this.orderList
     this.singleRequest = this.requestList
     // this.setCheckList(this.selectcheck)

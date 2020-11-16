@@ -12,8 +12,8 @@ const mutations = {
   }
 }
 const actions = {
-  setFaqs ({commit}) {
-    commit(types.SET_FAQ, FaqService.all())
+  async setFaqs ({commit}) {
+    commit(types.SET_FAQ, await FaqService.all())
   }
 }
 const getters = {

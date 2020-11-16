@@ -1,14 +1,5 @@
-import http from '@/app/services/localHttpCommon'
+// import http from '@/app/services/httpClient.js'
 
-const ENDPOINT = 'role_user'
-
-class RoleUserService {
-  all () {
-    return http.get(ENDPOINT)
-  }
-  store (data) {
-    return http.post(ENDPOINT, data)
-  }
-}
+class RoleUserService {}
 
 export default new RoleUserService()

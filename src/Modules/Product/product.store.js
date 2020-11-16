@@ -60,11 +60,12 @@ const actions = {
   async setProducts ({commit}, payload) {
     commit(types.SET_PRODUCT, ProductService.getProducts(payload))
   },
-  async searchProducts ({commit}, payload) {
-    commit(types.SET_PRODUCT_SEARCH, ProductService.getSearchKeywords(payload))
+  async searchKeywords ({commit}, payload) {
+    let keywords = await ProductService.getSearchKeywords(payload)
+    commit(types.SET_PRODUCT_SEARCH, keywords)
   },
   async advancedSearchProducts ({commit}, payload) {
-    commit(types.SET_PRODUCT_SEARCH, ProductService.getAdvancedSearchProducts(payload))
+    commit(types.SET_PRODUCT_SEARCH, await ProductService.getAdvancedSearchProducts(payload))
   }
 }
 

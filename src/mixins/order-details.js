@@ -64,32 +64,6 @@ export default {
       })
     },
     async changeOrderDetails (order, type, modal) {
-      let message = ''
-      if (type === 'internal-buyer') {
-        this.internalBuyers.forEach(buyer => {
-          if (buyer.value == order.internal_buyer_id) {
-            message = 'Internal Buyer assigned: <strong>' + buyer.text + '</strong>'
-          }
-        })
-      }
-      if (type === 'project-manager') {
-        this.projectManagers.forEach(manager => {
-          if (manager.value == order.manager_id) {
-            message = 'Project Manager assigned: <strong>' + manager.text + '</strong>'
-          }
-        })
-      }
-      if (type === 'buying-lead') {
-        this.buyingLeads.forEach(lead => {
-          if (lead.value == order.buying_lead_id) {
-            message = 'Buying Lead assigned: <strong>' + lead.text + '</strong>'
-          }
-        })
-      }
-      await this.addOrderHistory({
-        order,
-        message: message
-      })
       await this.updateOrder(order)
       this.retrieveOrderList()
       this.checkAccess()

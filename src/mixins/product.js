@@ -16,13 +16,13 @@ export default {
   methods: {
     ...mapActions('product', [
       'setProducts',
-      'searchProducts',
+      'searchKeywords',
       'removeSearchTag',
       'advancedSearchProducts',
       'setKeywords',
       'setAdvancedOptions'
     ]),
-    advancedSearch (options, tags, orderBy = null, orderDirection = 'desc') {
+    async advancedSearch (options, tags, orderBy = null, orderDirection = 'desc') {
       tags = this.value.filter((value, index, self) => {
         return self.indexOf(value) === index
       })
@@ -30,7 +30,7 @@ export default {
       this.setKeywords(tags)
       this.setAdvancedOptions(options)
 
-      this.advancedSearchProducts({
+      await this.advancedSearchProducts({
         options: options,
         tags: tags,
         orderBy: orderBy,

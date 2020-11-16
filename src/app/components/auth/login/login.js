@@ -7,6 +7,7 @@ import Logo from '../../common/logo/logo.vue'
 import login from '@/mixins/login'
 
 export default {
+  middleware: 'guest',
   mixins: [login],
   components: {
     'app-loginslider': Loginsliders,

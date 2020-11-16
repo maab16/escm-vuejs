@@ -1,14 +1,5 @@
-import http from '@/app/services/localHttpCommon.js'
+// import http, {storage} from '@/app/services/httpClient.js'
 
-const ENDPOINT = 'tests'
-
-class TestService {
-  all () {
-    return http.get(ENDPOINT)
-  }
-  store (data) {
-    return http.post(ENDPOINT, data)
-  }
-}
+class TestService {}
 
 export default new TestService()

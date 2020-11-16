@@ -16,7 +16,7 @@ const actions = {
   async saveComment ({commit, rootGetters}, payload) {
     let user = rootGetters['user/user']
     if (user) {
-      let comments = CommentService.addOrderComment(user, payload)
+      let comments = await CommentService.addOrderComment(user, payload)
       RecentUpdateService.addRecentUpdate(user, payload, 'comment')
       commit(types.SET_COMMENT, comments)
     }

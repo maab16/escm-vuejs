@@ -20,9 +20,9 @@ const actions = {
       let userKey = getters.userKey
       let recents = []
       if (option.type === 'all') {
-        recents = RecentUpdateService.getRecentUpdates(user, userKey, option, null)
+        recents = await RecentUpdateService.getRecentUpdates(user, userKey, option, null)
       } else if (option.type === 'summary') {
-        recents = RecentUpdateService.getRecentUpdates(user, userKey, option, process.env.RECENT_UPDATES_LIMIT)
+        recents = await RecentUpdateService.getRecentUpdates(user, userKey, option, process.env.RECENT_UPDATES_LIMIT)
       }
       commit(types.SET_RECENT_UPDATES, recents)
     }

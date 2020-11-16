@@ -98,7 +98,7 @@ const actions = {
     }
     commit(types.SET_CART_REQUEST, requests)
   },
-  setCartItems ({commit}) {
+  async setCartItems ({commit}) {
     let carts = localStorage.getItem('carts') != null
       ? JSON.parse(localStorage.getItem('carts'))
       : []
@@ -109,7 +109,7 @@ const actions = {
       ? JSON.parse(localStorage.getItem('request_carts'))
       : []
 
-    carts = ProductService.checkAvailabilty(carts)
+    carts = await ProductService.checkAvailabilty(carts)
 
     commit(types.SET_CART, carts)
     commit(types.SET_TOTAL_CART, total)
