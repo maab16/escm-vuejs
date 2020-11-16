@@ -1,36 +1,25 @@
-import http, {storage} from '@/app/services/httpCommon.js'
-// import axios from '@/app/services/order'
-// import axios from 'axios'
+import http from '@/app/services/httpClient.js'
 
 const ENDPOINT = 'orders'
 
 class OrderService {
-  all () {
-    return storage.get(ENDPOINT)
-  }
-  store (data) {
-    return storage.post(ENDPOINT, data)
-  }
-  update (data) {
-    return storage.put(ENDPOINT, data)
-  }
   async createOrder (user, payload) {
-    let response = await http.post('orders/', {user: user, payload: payload})
+    let response = await http.post(ENDPOINT, {user: user, payload: payload})
     return response.data
   }
   async getOrders (userKey, user, option = {}, limit = null) {
-    let response = await http.get('orders', {
+    let response = await http.get(ENDPOINT, {
       params: {
         userKey: userKey,
         user: user,
         option: option,
         limit: limit
       }
-    })
-    return response.data
+    }).then(res => res.data)
+    return response
   }
   async getOrder (id) {
-    let response = await http.get('orders/' + id)
+    let response = await http.get(ENDPOINT + '/' + id)
     return response.data
   }
   async getInternalBuyers (id) {
@@ -38,7 +27,7 @@ class OrderService {
     return response.data
   }
   async updateOrder (data, rootGetters) {
-    let response = await http.put('orders/' + data.id, {
+    let response = await http.put(ENDPOINT + '/' + data.id, {
       id: data.id,
       user_id: data.user_id,
       manager_id: data.manager_id,
@@ -56,7 +45,7 @@ class OrderService {
     return response.data
   }
   async updateProductLines (user, data, products) {
-    let response = await http.put('orders/lines/' + data.id, {
+    let response = await http.put(ENDPOINT + '/lines/' + data.id, {
       id: data.id,
       user_id: data.user_id,
       manager_id: data.manager_id,

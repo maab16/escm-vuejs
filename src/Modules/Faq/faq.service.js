@@ -1,13 +1,11 @@
-import http from '@/app/services/localHttpCommon.js'
+import http from '@/app/services/httpClient.js'
 
 const ENDPOINT = 'faqs'
 
 class FaqService {
-  all () {
-    return http.get(ENDPOINT)
-  }
-  store (data) {
-    return http.post(ENDPOINT, data)
+  async all () {
+    let response = await http.get(ENDPOINT)
+    return response.data
   }
 }
 

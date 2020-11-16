@@ -1,4 +1,4 @@
-import http from '@/app/services/localHttpCommon.js'
+import http, {storage} from '@/app/services/httpClient.js'
 import HistoryService from '@/Modules/History/history.service'
 import LineDetails from '@/Modules/OrderDetails/line-details.model'
 import History from '@/Modules/History/history.model'
@@ -8,13 +8,13 @@ const ENDPOINT = 'order_lines'
 
 class OrderLineService {
   all () {
-    return http.get(ENDPOINT)
+    return storage.get(ENDPOINT)
   }
   store (data) {
-    return http.post(ENDPOINT, data)
+    return storage.post(ENDPOINT, data)
   }
   update (data) {
-    return http.put(ENDPOINT, data)
+    return storage.put(ENDPOINT, data)
   }
   add (data) {
     let lines = this.all()

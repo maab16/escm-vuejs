@@ -112,8 +112,8 @@ export default {
         this.topSearchbar = false
       }
     },
-    search: function () {
-      this.searchProducts(this.search)
+    search: async function () {
+      await this.searchKeywords(this.search)
       this.options = this.getSearchProducts
     },
     value: function () {

@@ -12,12 +12,12 @@ const mutations = {
   }
 }
 const actions = {
-  setRequests ({commit, getters, rootGetters}, option) {
+  async setRequests ({commit, getters, rootGetters}, option) {
     let user = rootGetters['user/user']
     if (user) {
       let requests = []
       let userKey = getters.userKey
-      requests = RequestService.getRequests(userKey, user, option)
+      requests = await RequestService.getRequests(userKey, user, option)
       commit(types.SET_REQUEST, requests)
       return true
     }

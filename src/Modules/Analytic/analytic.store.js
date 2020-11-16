@@ -63,7 +63,7 @@ const actions = {
   async setAnalyticOrders ({commit, rootGetters}) {
     let loggedUser = rootGetters['user/user']
     if (loggedUser) {
-      let {orders, customerOrders} = AnalyticService.getAnalyticOrders(loggedUser, rootGetters)
+      let {orders, customerOrders} = await AnalyticService.getAnalyticOrders(loggedUser, rootGetters)
       commit(types.SET_ANALYTIC_ORDERS, orders)
       commit(types.SET_CUSTOMER_ORDERS, customerOrders)
     }
@@ -72,49 +72,56 @@ const actions = {
     let loggedUser = rootGetters['user/user']
 
     if (loggedUser) {
-      let products = AnalyticService.getPopularProducts(loggedUser, rootGetters)
+      let products = await AnalyticService.getPopularProducts(loggedUser, rootGetters)
       commit(types.SET_POPULAR_PRODUCTS, products)
     }
   },
   async setOrdersByMonth ({commit, rootGetters}) {
     let loggedUser = rootGetters['user/user']
     if (loggedUser) {
-      commit(types.SET_ORDERS_BY_MONTH, AnalyticService.getOrdersByMonth(loggedUser, rootGetters))
+      let orders = await AnalyticService.getOrdersByMonth(loggedUser, rootGetters)
+      commit(types.SET_ORDERS_BY_MONTH, orders)
     }
   },
   async setCompanyDistributionData ({commit, rootGetters}) {
     let loggedUser = rootGetters['user/user']
     if (loggedUser) {
-      commit(types.SET_DISTRIBUTION_DATA, AnalyticService.getCompanyDistributionData(loggedUser, rootGetters))
+      let companyDistributionData = await AnalyticService.getCompanyDistributionData(loggedUser, rootGetters)
+      commit(types.SET_DISTRIBUTION_DATA, companyDistributionData)
     }
   },
   async setUnavailableOrdersByMonth ({commit, rootGetters}) {
     let loggedUser = rootGetters['user/user']
     if (loggedUser) {
-      commit(types.SET_UNAVIALBLE_ORDERS_BY_MONTH, AnalyticService.getUnavailableOrdersByMonth(loggedUser, rootGetters))
+      let unavailableOrders = await AnalyticService.getUnavailableOrdersByMonth(loggedUser, rootGetters)
+      commit(types.SET_UNAVIALBLE_ORDERS_BY_MONTH, unavailableOrders)
     }
   },
   async setInternalBuyerOrdersByMonth ({commit, rootGetters}) {
     let loggedUser = rootGetters['user/user']
     if (loggedUser) {
-      commit(types.SET_INTERNAL_BUYER_ORDERS_BY_MONTH, AnalyticService.getInternalBuyerOrdersByMonth(loggedUser, rootGetters))
+      let buyerOrders = await AnalyticService.getInternalBuyerOrdersByMonth(loggedUser, rootGetters)
+      commit(types.SET_INTERNAL_BUYER_ORDERS_BY_MONTH, buyerOrders)
     }
   },
   async setCompanyDataByBuyer ({commit, rootGetters}) {
     let loggedUser = rootGetters['user/user']
     if (loggedUser) {
-      commit(types.SET_BUYER_COMPANY_DATA, AnalyticService.getCompanyDataByBuyer(loggedUser, rootGetters))
+      let comapnyDataByBuyer = await AnalyticService.getCompanyDataByBuyer(loggedUser, rootGetters)
+      commit(types.SET_BUYER_COMPANY_DATA, comapnyDataByBuyer)
     }
   },
   async setUnavailableProducts ({commit, rootGetters}) {
     let user = rootGetters['user/user']
-    commit(types.SET_UNAVAILABLE_PRODUCTS, AnalyticService.getUnavailableProducts(user, rootGetters))
+    let unavailableProducts = await AnalyticService.getUnavailableProducts(user, rootGetters)
+    commit(types.SET_UNAVAILABLE_PRODUCTS, unavailableProducts)
   },
   async setOrdersByStatus ({commit, rootGetters}, {status, option}) {
     let loggedUser = rootGetters['user/user']
     if (loggedUser) {
       let setter = 'SET_' + status.trim().toUpperCase() + '_ORDERS'
-      commit(types[setter], AnalyticService.getOrdersByStatus(loggedUser, rootGetters, option, status))
+      let ordersByStatus = await AnalyticService.getOrdersByStatus(loggedUser, rootGetters, option, status)
+      commit(types[setter], ordersByStatus)
     }
   },
   async setSuccessfulOrders ({dispatch}, option = {}) {
@@ -142,7 +149,6 @@ const actions = {
         status: 'pending',
         option: option
       })
-      // commit(types.SET_PENDING_ORDERS, AnalyticService.getPendingOrders(loggedUser, rootGetters, option))
     }
   }
 }

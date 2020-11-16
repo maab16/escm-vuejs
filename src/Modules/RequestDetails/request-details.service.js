@@ -1,14 +1,5 @@
-import http from '@/app/services/localHttpCommon.js'
+// import http from '@/app/services/httpClient.js'
 
-const ENDPOINT = 'requestDetails'
-
-class RequestDetailsService {
-  all () {
-    return http.get(ENDPOINT)
-  }
-  store (data) {
-    return http.post(ENDPOINT, data)
-  }
-}
+class RequestDetailsService {}
 
 export default new RequestDetailsService()

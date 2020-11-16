@@ -1,11 +1,12 @@
-import http from '@/app/services/localHttpCommon.js'
-import commentService from '@/Modules/Comment/comment.service'
-import HistoryService from '@/Modules/History/history.service'
-import OrderDetailsService from '@/Modules/OrderDetails/order-details.service'
-import RequestDetailsService from '@/Modules/RequestDetails/request-details.service'
-// import OrderLineService from '@/Modules/OrderDetails/order-line.service'
-import RequestLineService from '@/Modules/RequestDetails/request-line.service'
-import NotificationService from '@/Modules/Notification/notification.service'
+import {storage} from '@/app/services/httpClient.js'
+import UserEntity from '@/Modules/User/user.entity'
+import CommentEntity from '@/Modules/Comment/comment.entity'
+import HistoryEntity from '@/Modules/History/history.entity'
+import OrderDetailsEntity from '@/Modules/OrderDetails/order-details.entity'
+import RequestDetailsEntity from '@/Modules/RequestDetails/request-details.entity'
+// import OrderLineEntity from '@/Modules/OrderDetails/order-line.entity'
+import RequestLineEntity from '@/Modules/RequestDetails/request-line.entity'
+import NotificationEntity from '@/Modules/Notification/notification.entity'
 import User from '@/Modules/User/user.model'
 import Order from '@/Modules/Order/order.model'
 import OrderDetails from '@/Modules/OrderDetails/order-details.model'
@@ -17,26 +18,25 @@ import LineDetails from '@/Modules/OrderDetails/line-details.model'
 import RequestLine from '@/Modules/RequestDetails/request-line.model'
 
 import moment from 'moment'
-import UserService from '@/Modules/User/user.service'
 
 const ENDPOINT = 'orders'
 
 class OrderEntity {
   all () {
-    return http.get(ENDPOINT)
+    return storage.get(ENDPOINT)
   }
   store (data) {
-    return http.post(ENDPOINT, data)
+    return storage.post(ENDPOINT, data)
   }
   update (data) {
-    return http.put(ENDPOINT, data)
+    return storage.put(ENDPOINT, data)
   }
   createOrder (params) {
     let {user, payload} = params
-    let orderDetails = OrderDetailsService.all()
-    let requestDetails = RequestDetailsService.all()
+    let orderDetails = OrderDetailsEntity.all()
+    let requestDetails = RequestDetailsEntity.all()
     let orders = this.all()
-    let histories = HistoryService.all()
+    let histories = HistoryEntity.all()
 
     let orderId = Order.query().max('id') + 1
     let order = {
@@ -88,13 +88,13 @@ class OrderEntity {
     })
 
     this.store(orders)
-    OrderDetailsService.store(orderDetails)
-    RequestDetailsService.store(requestDetails)
-    HistoryService.store(histories)
+    OrderDetailsEntity.store(orderDetails)
+    RequestDetailsEntity.store(requestDetails)
+    HistoryEntity.store(histories)
 
     Order.insert({data: this.all()})
-    OrderDetails.insert({data: OrderDetailsService.all()})
-    RequestDetails.insert({data: RequestDetailsService.all()})
+    OrderDetails.insert({data: OrderDetailsEntity.all()})
+    RequestDetails.insert({data: RequestDetailsEntity.all()})
 
     let orderData = Order.query().withAllRecursive().where('id', order.id).first()
 
@@ -109,7 +109,7 @@ class OrderEntity {
       .filter(userData => userData.roles.length > 0)
 
     users.forEach(customerUser => {
-      NotificationService.send('general_notification', {
+      NotificationEntity.send('general_notification', {
         title: 'Order Placed Success',
         name: customerUser.fname + ' ' + customerUser.lname,
         email: customerUser.email,
@@ -120,7 +120,7 @@ class OrderEntity {
       })
     })
 
-    NotificationService.send('general_notification', {
+    NotificationEntity.send('general_notification', {
       title: 'Order Placed Success',
       name: buyingLead.fname + ' ' + buyingLead.lname,
       email: buyingLead.email,
@@ -130,7 +130,7 @@ class OrderEntity {
       message: 'You\'ve a new order from ' + companyName + '. The order number is ' + orderId + '. Please login in ' + companyName + ' and check your order details.'
     })
 
-    NotificationService.send('general_notification', {
+    NotificationEntity.send('general_notification', {
       title: 'Order Placed Success',
       name: user.fname + ' ' + user.lname,
       email: user.email,
@@ -145,8 +145,8 @@ class OrderEntity {
   getOrders (params) {
     let { userKey, user, option, limit } = params
     Order.insert({data: this.all()})
-    OrderDetails.insert({data: OrderDetailsService.all()})
-    RequestDetails.insert({data: RequestDetailsService.all()})
+    OrderDetails.insert({data: OrderDetailsEntity.all()})
+    RequestDetails.insert({data: RequestDetailsEntity.all()})
 
     let query = Order.query().withAllRecursive()
 
@@ -195,13 +195,12 @@ class OrderEntity {
     return orders
   }
   getOrder (params) {
-    console.log(params)
     let id = params.id
     Order.insert({data: this.all()})
-    OrderDetails.insert({data: OrderDetailsService.all()})
-    RequestDetails.insert({data: RequestDetailsService.all()})
-    History.insert({data: HistoryService.all()})
-    Comment.insert({data: commentService.all()})
+    OrderDetails.insert({data: OrderDetailsEntity.all()})
+    RequestDetails.insert({data: RequestDetailsEntity.all()})
+    History.insert({data: HistoryEntity.all()})
+    Comment.insert({data: CommentEntity.all()})
 
     let order = Order.query()
       .withAllRecursive(5)
@@ -211,10 +210,10 @@ class OrderEntity {
       .where('id', Number(id))
       .first()
 
-    // LineDetails.insert({data: OrderLineService.all()})
-    RequestLine.insert({data: RequestLineService.all()})
+    // LineDetails.insert({data: OrderLineEntity.all()})
+    RequestLine.insert({data: RequestLineEntity.all()})
 
-    // console.log(RequestLineService.all())
+    // console.log(RequestLineEntity.all())
     // console.log(RequestLine.all())
 
     // order.products = order.products.map(product => {
@@ -269,9 +268,8 @@ class OrderEntity {
   }
   getInternalBuyers (params) {
     let id = params.id
-    console.log(id)
-    User.insert({data: UserService.all()})
-    // console.log(User.query().withAllRecursive().where('id', Number(id)).first())
+    User.insert({data: UserEntity.all()})
+
     return User.query().withAllRecursive().where('id', Number(id)).first().buyers
   }
   updateOrder (data) {
@@ -289,69 +287,73 @@ class OrderEntity {
       .withAllRecursive()
       .get()
       .forEach(order => {
-        let user = null
-        let message = ''
-        let companyName = 'Sailife'
-        let historyMessages = []
+        if (order.id === data.id) {
+          let user = null
+          let message = ''
+          let companyName = 'Sailife'
+          let historyMessages = []
+  
+          if (!order.manager_id && data.manager_id) {
+            user = User.find(data.manager_id)
+            message = 'You\'ve assigned as a project manager to order ' + data.id + ' in ' + companyName + '. Please login in ' + companyName + ' and check your order details.'
+            historyMessages.push('Project Manager Assigned: ' + user.fname + ' ' + user.lname)
+          } else if (order.manager_id && data.manager_id && order.manager_id !== data.manager_id) {
+            user = User.find(data.manager_id)
+            message = 'You\'ve assigned as a project manager to order ' + data.id + ' in ' + companyName + '. Please login in ' + companyName + ' and check your order details.'
+            historyMessages.push('Project Manager Changed: ' + user.fname + ' ' + user.lname)
+          } else if (order.manager_id && !data.manager_id) {
+            user = User.find(order.manager_id)
+            message = 'You\'ve revoked from order ' + data.id + ' in ' + companyName + '. Please login in ' + companyName + ' and check your order details.'
+            historyMessages.push('Project Manager Revoked: ' + user.fname + ' ' + user.lname)
+          }
+  
+          if (!order.buying_lead_id && data.buying_lead_id) {
+            user = User.find(data.buying_lead_id)
+            message = 'You\'ve assigned as a project manager to order ' + data.id + ' in ' + companyName + '. Please login in ' + companyName + ' and check your order details.'
+            historyMessages.push('Buying Lead Assigned: ' + user.fname + ' ' + user.lname)
+          } else if (order.buying_lead_id && data.buying_lead_id && order.buying_lead_id !== data.buying_lead_id) {
+            user = User.find(data.buying_lead_id)
+            message = 'You\'ve assigned as a project manager to order ' + data.id + ' in ' + companyName + '. Please login in ' + companyName + ' and check your order details.'
+            historyMessages.push('Buying Lead Changed: ' + user.fname + ' ' + user.lname)
+          } else if (order.buying_lead_id && !data.buying_lead_id) {
+            user = User.find(order.buying_lead_id)
+            historyMessages.push('Buying Lead Revoked: ' + user.fname + ' ' + user.lname)
+          }
+  
+          if (!order.internal_buyer_id && data.internal_buyer_id) {
+            user = User.find(data.internal_buyer_id)
+            message = 'You\'ve assigned as an internal buyer to order ' + data.id + ' in ' + companyName + '. Please login in ' + companyName + ' and check your order details.'
+            historyMessages.push('Internal Buyer Assigned: ' + user.fname + ' ' + user.lname)
+          } else if (order.internal_buyer_id && data.internal_buyer_id && order.internal_buyer_id !== data.internal_buyer_id) {
+            user = User.find(data.internal_buyer_id)
+            message = 'You\'ve assigned as an internal buyer to order ' + data.id + ' in ' + companyName + '. Please login in ' + companyName + ' and check your order details.'
+            historyMessages.push('Internal Buyer Changed: ' + user.fname + ' ' + user.lname)
+          } else if (order.internal_buyer_id && !data.internal_buyer_id) {
+            user = User.find(order.internal_buyer_id)
+            message = 'You\'ve revoked from order ' + data.id + ' in ' + companyName + '. Please login in ' + companyName + ' and check your order details.'
+            historyMessages.push('Internal Buyer Revoked: ' + user.fname + ' ' + user.lname)
+          }
 
-        if (!order.manager_id && data.manager_id) {
-          user = User.find(data.manager_id)
-          message = 'You\'ve assigned as a project manager to order ' + data.id + ' in ' + companyName + '. Please login in ' + companyName + ' and check your order details.'
-          historyMessages.push('Project Manager Assigned: ' + user.fname + ' ' + user.lname)
-        } else if (order.manager_id && data.manager_id && order.manager_id !== data.manager_id) {
-          user = User.find(data.manager_id)
-          message = 'You\'ve assigned as a project manager to order ' + data.id + ' in ' + companyName + '. Please login in ' + companyName + ' and check your order details.'
-          historyMessages.push('Project Manager Changed: ' + user.fname + ' ' + user.lname)
-        } else if (order.manager_id && !data.manager_id) {
-          user = User.find(order.manager_id)
-          message = 'You\'ve revoked from order ' + data.id + ' in ' + companyName + '. Please login in ' + companyName + ' and check your order details.'
-          historyMessages.push('Project Manager Revoked: ' + user.fname + ' ' + user.lname)
-        }
+          if (historyMessages.length > 0) {
+            historyMessages.forEach(historyMessage => {
+              HistoryEntity.createOrderHistory(data.user, {
+                order: data,
+                message: historyMessage
+              })
+            })
+          }
 
-        if (!order.buying_lead_id && data.buying_lead_id) {
-          user = User.find(data.buying_lead_id)
-          message = 'You\'ve assigned as a project manager to order ' + data.id + ' in ' + companyName + '. Please login in ' + companyName + ' and check your order details.'
-          historyMessages.push('Buying Lead Assigned: ' + user.fname + ' ' + user.lname)
-        } else if (order.buying_lead_id && data.buying_lead_id && order.buying_lead_id !== data.buying_lead_id) {
-          user = User.find(data.buying_lead_id)
-          message = 'You\'ve assigned as a project manager to order ' + data.id + ' in ' + companyName + '. Please login in ' + companyName + ' and check your order details.'
-          historyMessages.push('Buying Lead Changed: ' + user.fname + ' ' + user.lname)
-        } else if (order.buying_lead_id && !data.buying_lead_id) {
-          user = User.find(order.buying_lead_id)
-          historyMessages.push('Buying Lead Revoked: ' + user.fname + ' ' + user.lname)
-        }
-
-        if (!order.internal_buyer_id && data.internal_buyer_id) {
-          user = User.find(data.internal_buyer_id)
-          message = 'You\'ve assigned as an internal buyer to order ' + data.id + ' in ' + companyName + '. Please login in ' + companyName + ' and check your order details.'
-          historyMessages.push('Internal Buyer Assigned: ' + user.fname + ' ' + user.lname)
-        } else if (order.internal_buyer_id && data.internal_buyer_id && order.internal_buyer_id !== data.internal_buyer_id) {
-          user = User.find(data.internal_buyer_id)
-          message = 'You\'ve assigned as an internal buyer to order ' + data.id + ' in ' + companyName + '. Please login in ' + companyName + ' and check your order details.'
-          historyMessages.push('Internal Buyer Changed: ' + user.fname + ' ' + user.lname)
-        } else if (order.internal_buyer_id && !data.internal_buyer_id) {
-          user = User.find(order.internal_buyer_id)
-          message = 'You\'ve revoked from order ' + data.id + ' in ' + companyName + '. Please login in ' + companyName + ' and check your order details.'
-          historyMessages.push('Internal Buyer Revoked: ' + user.fname + ' ' + user.lname)
-        }
-
-        historyMessages.forEach(historyMessage => {
-          HistoryService.createOrderHistory(data.user, {
-            order: data,
-            message: historyMessage
-          })
-        })
-
-        if (user) {
-          NotificationService.send('general_notification', {
-            title: 'Assinged new order',
-            name: user.fname + ' ' + user.lname,
-            email: user.email,
-            order_id: data.id,
-            company_name: companyName,
-            reply_to: 'no-reply@sailife.com',
-            message: message
-          })
+          if (user) {
+            NotificationEntity.send('general_notification', {
+              title: 'Assinged new order',
+              name: user.fname + ' ' + user.lname,
+              email: user.email,
+              order_id: data.id,
+              company_name: companyName,
+              reply_to: 'no-reply@sailife.com',
+              message: message
+            })
+          }
         }
       })
 
@@ -373,45 +375,40 @@ class OrderEntity {
     let orders = this.all()
     Order.insert({data: orders})
 
-    console.log(Order.query().withAllRecursive().whereId(data.id).first())
-
     return Order.query().withAllRecursive().whereId(data.id).first()
   }
   updateProductLines (data) {
-    console.log(data)
     let user = data.user
     let order = data
-    let products = data.products
-    console.log(products)
 
     data.products.forEach(product => {
       if (!product.lines) {
-        OrderDetailsService.update(user, order, product)
+        OrderDetailsEntity.update(user, order, product)
       }
     })
 
     data.requests.forEach(request => {
       if (request.lines) {
-        let lines = RequestLine
-          .query()
-          .withAllRecursive()
-          .where('product_id', request.id)
-          .where('order_id', order.id)
-          .get()
-          .filter(line => {
-            let isLine = false
-            request.lines.forEach(requestLine => {
-              if (requestLine.id === line.id) {
-                isLine = true
-              }
-            })
-            if (isLine) {
-              return line
-            }
-          })
-        RequestLineService.store(lines)
+        // let lines = RequestLine
+        //   .query()
+        //   .withAllRecursive()
+        //   .where('product_id', request.id)
+        //   .where('order_id', order.id)
+        //   .get()
+        //   .filter(line => {
+        //     let isLine = false
+        //     request.lines.forEach(requestLine => {
+        //       if (requestLine.id === line.id) {
+        //         isLine = true
+        //       }
+        //     })
+        //     if (isLine) {
+        //       return line
+        //     }
+        //   })
+        // RequestLineEntity.store(lines)
         request.lines.forEach(requestLine => {
-          RequestLineService.addOrUpdate(user, order, requestLine)
+          RequestLineEntity.addOrUpdate(user, order, requestLine)
         })
       }
     })

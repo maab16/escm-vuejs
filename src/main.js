@@ -18,6 +18,7 @@ Vue.component('v-otp-input', OtpInput)
 Vue.config.productionTip = false
 Vue.use(BootstrapVue, BTable)
 Vue.use(BootstrapVueIcons)
+window.toastr = require('toastr')
 
 new Vue({
   router,

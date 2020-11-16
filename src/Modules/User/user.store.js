@@ -3,75 +3,88 @@
 import Cookies from 'js-cookie'
 import UserService from '@/Modules/User/user.service'
 import * as types from './mutation-types'
-// import NotificationService from '@/Modules/Notification/notification.service'
 
 const stateData = {
   user: localStorage.getItem('user') != null
     ? JSON.parse(localStorage.getItem('user'))
     : null,
-  otp: Cookies.get('otp') !== undefined ? JSON.parse(Cookies.get('otp')) : null
+  otp: Cookies.get('otp') !== undefined ? JSON.parse(Cookies.get('otp')) : null,
+  token: Cookies.get('token') ? Cookies.get('token') : null
 }
 
 const mutations = {
   [types.SET_USER] (state, payload) {
     state.user = payload
-    // Cookies.set('user', JSON.stringify(payload), { expires: 365 })
-    // localStorage.setItem('user', JSON.stringify(payload))
   },
   [types.SET_OTP] (state, payload) {
     state.otp = Number(payload)
     Cookies.remove('otp')
     Cookies.set('otp', payload, { expires: process.env.OTP_LIFETIME })
   },
+  [types.SET_TOKEN] (state, token) {
+    state.token = token
+    Cookies.set('token', token, {expires: 365})
+  },
   [types.LOGOUT] (state) {
     state.user = null
     state.otp = null
-
-    localStorage.setItem('user', JSON.stringify(null))
-    // Cookies.remove('user')
+    state.token = null
+    Cookies.remove('token')
   }
 }
 
 const actions = {
-  async sendOTP ({commit}, payload) {
+  async sendOTP ({commit}, email) {
     // let otp = Math.floor(1000 + Math.random() * 9000)
     const crypto = window.crypto || window.msCrypto
     var array = new Uint32Array(1)
     crypto.getRandomValues(array)
     const otp = array[0].toString().substr(0, 4)
 
-    // let data = {
-    //   email: payload.email,
-    //   fname: payload.fname,
-    //   lname: payload.lname,
-    //   otp: otp,
-    //   company_name: 'eSCM',
-    //   reply_to: 'no-reply@escm.com'
-    // }
-    // NotificationService.send('otp', data)
+    await UserService.sendOTP(email, otp)
     commit(types.SET_OTP, otp)
   },
   async createNewUser ({commit}, payload) {
     UserService.createUser(payload)
   },
   async loginInternalUser ({commit}, email) {
-    return UserService.verifyInternalUser(email)
+    let user = await UserService.verifyInternalUser(email)
+    return user
+  },
+  async verifyCustomerUser ({commit}, paylaod) {
+    let user = await UserService.verifyCustomerUser(paylaod)
+    return user
+  },
+  async verifyUser ({commit, dispatch, getters}, payload) {
+    let response = await UserService.login({
+      email: payload.email,
+      otp: payload.otp
+    })
+    commit(types.SET_USER, response.user)
+    dispatch('saveToken', response.token)
+  },
+  saveToken ({commit}, token) {
+    commit(types.SET_TOKEN, token)
+  },
+  async fetchUser ({commit}) {
+    let user = await UserService.getUserByToken()
+    if (!user) {
+      commit(types.SET_TOKEN, null)
+    }
+    commit(types.SET_USER, user)
   },
   async logout ({commit}) {
     commit(types.LOGOUT)
   },
   setDefaultOTP ({commit}, payload) {
     commit(types.SET_OTP, null)
-  },
-  setUserData ({commit}, email) {
-    let user = UserService.setUser(email)
-    commit(types.SET_USER, user)
   }
 }
 
 const getters = {
-  user: state => state.user,
-  check: state => state.user !== null,
+  user: (state) => state.user,
+  token: (state) => state.token,
+  check: (state) => state.user !== null,
   hasRole: (state) => (slug) => {
     if (state.user) {
       let isRole = false
@@ -162,19 +175,6 @@ const getters = {
       return isRole
     }
     return false
-  },
-  getUserByEmail: (state) => (email) => {
-    if (state.user.email != null) {
-      return state.user
-    }
-
-    return UserService.getByEmail(email)
-  },
-  getUserByEmailWithOrganization: (state) => (email) => {
-    return UserService.getByEmail(email)
-  },
-  getMaxId: (state) => {
-    return UserService.getMaxId()
   },
   getOTP: (state) => {
     return state.otp

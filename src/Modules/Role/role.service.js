@@ -1,16 +1,9 @@
-import http from '@/app/services/localHttpCommon'
-import Role from './role.model'
-
-const ENDPOINT = 'roles'
+// import http from '@/app/services/httpClient.js'
+import RoleEntity from '@/Modules/Role/role.entity'
 
 class RoleService {
-  all () {
-    return http.get(ENDPOINT)
-  }
   getRoles () {
-    let roles = this.all()
-    Role.insert({data: roles})
-    return Role.query().withAll().get()
+    return RoleEntity.getRoles()
   }
 }
 

@@ -1,9 +1,8 @@
 import userMixin from '@/mixins/user'
-import { mapActions, mapGetters } from 'vuex'
+import { mapActions } from 'vuex'
 
 export default {
   mixins: [userMixin],
-  middleware: 'guest',
   data: () => ({
     email: '',
     accountemail: '',
@@ -29,68 +28,54 @@ export default {
     error: '',
     userData: {}
   }),
-  computed: {
-    ...mapGetters('organization', [
-      'getOrganization',
-      'getOrganizationIdByEmail'
-    ])
-  },
   methods: {
     ...mapActions('organization', [
-      'setOrganization'
+      'verifyOrganization'
     ]),
     /**
      * Login admin click action
      */
     async loginAdmin () {
-      if (this.getOrganization(this.email)) {
+      if (await this.verifyOrganization(this.email) === true) {
         this.login = !this.login
         this.accountinfo = true
         this.error = ''
-      } else if (this.getDomainFromEmail(this.email) === process.env.INTERNAL_USER_DOMAIN && await this.loginInternalUser(this.email)) {
+      } else if (this.getDomainFromEmail(this.email) === process.env.INTERNAL_USER_DOMAIN && await this.loginInternalUser(this.email) === true) {
         this.accountemail = this.email
-        this.userData = this.getUserByEmailWithOrganization(this.accountemail)
-
-        if (this.userData != null) {
-          if (this.getOTP === null) {
-            this.sendOTP(this.userData)
-          }
-
-          console.log(this.getOTP)
-          this.login = !this.login
-          this.accountinfo = false
-          this.verify = true
-          this.error = ''
+        if (this.getOTP === null) {
+          this.sendOTP(this.email)
         }
+
+        console.log(this.getOTP)
+        this.login = !this.login
+        this.accountinfo = false
+        this.verify = true
+        this.error = ''
       } else {
         this.error = 'Please enter valid organization or internal user email.'
+        window.toastr.error(this.error)
       }
     },
     /**
      * Login user click  action
      */
-    loginUsers () {
+    async loginUsers () {
       if (this.getDomainFromEmail(this.email) === this.getDomainFromEmail(this.accountemail)) {
-        this.userData = this.getUserByEmailWithOrganization(this.accountemail)
-
-        if (this.userData != null) {
-          if (this.userData.organization !== null && this.userData.organization.email === this.email) {
-            if (this.getOTP === null) {
-              this.sendOTP(this.userData)
-            }
-            // console.log(this.getOTP)
-            this.accountinfo = false
-            this.verify = true
-            this.error = ''
-          } else {
-            this.error = 'Please enter valid account email.'
+        if (await this.verifyCustomerUser({ email: this.accountemail, organization_email: this.email }) === true) {
+          if (!this.getOTP) {
+            this.sendOTP(this.accountemail)
           }
+          // console.log(this.getOTP)
+          this.accountinfo = false
+          this.verify = true
+          this.error = ''
         } else {
           this.newuser = true
           this.accountinfo = false
         }
       } else {
         this.error = 'Account email should be match with organization domain. Ex: ' + this.getDomainFromEmail(this.email)
+        window.toastr.error(this.error)
       }
     },
     /**
@@ -109,7 +94,7 @@ export default {
         mobile: this.mobile
       }
       this.createNewUser(this.userData)
-      this.sendOTP(this.userData)
+      this.sendOTP(this.accountemail)
       // console.log(this.getOTP)
       this.newuser = false
       this.verify = true
@@ -131,10 +116,14 @@ export default {
     handleClearInput () {
       this.$refs.otpInput.clearInput()
     },
-    verifyOTP () {
-      if (Number(this.otpdata) === this.getOTP) {
+    async verifyOTP () {
+      await this.verifyUser({
+        email: this.accountemail,
+        otp: this.otpdata
+      })
+      if (this.user) {
         this.setDefaultOTP()
-        this.setUserData(this.accountemail)
+        // this.setuser(this.accountemail)
         this.otperror = false
         this.$router.push('home')
       } else {
@@ -156,7 +145,7 @@ export default {
       this.dismissCountDown = dismissCountDown
     },
     async showAlert () {
-      this.sendOTP(this.userData)
+      this.sendOTP(this.accountemail)
       this.dismissCountDown = this.dismissSecs
       // console.log(this.getOTP)
     },
