@@ -55,7 +55,7 @@ const actions = {
     let user = await UserService.verifyCustomerUser(paylaod)
     return user
   },
-  async verifyUser ({commit, dispatch, getters}, payload) {
+  async verifyUser ({commit, dispatch}, payload) {
     let response = await UserService.login({
       email: payload.email,
       otp: payload.otp
