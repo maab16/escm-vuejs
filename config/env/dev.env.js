@@ -11,5 +11,5 @@ module.exports = {
     DEBOUNCE_WAIT_RATE: 500,// search wait in miliseconds
     COUNTDOWN: 59, // Set coundown for checkout in seconds. Default 60 SECONDS
     PRIVATE_KEY: 'private-key',
-    TOKEN_EXPIRES: 60 * 60 // seconds
+    TOKEN_EXPIRES: 60 // seconds
 };

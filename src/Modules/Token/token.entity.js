@@ -33,6 +33,7 @@ class TokenEntity {
     Token.insert({data: this.all()})
   }
   getTokenUser (token) {
+    console.log(process.env.TOKEN_EXPIRES)
     Token.insert({data: this.all()})
     let tokenDetails = Token.query().withAllRecursive().where('token', token).first()
     if (tokenDetails && tokenDetails.user) {
@@ -43,7 +44,9 @@ class TokenEntity {
           return user
         }
       } catch (err) {
-        throw err
+        if (err && err.name === 'TokenExpiredError') {
+          throw err
+        }
       }
     }
     return null
