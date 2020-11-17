@@ -24,26 +24,26 @@ const mock = new MockAdapter(httpClient)
 class Route {
   get (path, controller, action) {
     mock.onGet(this.getPath(path)).reply((config) => {
-      let getResponse = controller[action](this.getParams(path, config))
-      return [200, getResponse]
+      let response = controller[action](this.getParams(path, config))
+      return [200, response]
     })
   }
   post (path, controller, action) {
     mock.onPost(this.getPath(path)).reply((config) => {
-      let postResponse = controller[action](this.getParams(path, config))
-      return [200, postResponse]
+      let response = controller[action](this.getParams(path, config))
+      return [200, response]
     })
   }
   put (path, controller, action) {
     mock.onPut(this.getPath(path)).reply((config) => {
-      let putResponse = controller[action](JSON.parse(config.data))
-      return [200, putResponse]
+      let response = controller[action](JSON.parse(config.data))
+      return [200, response]
     })
   }
   delete (path, controller, action) {
     mock.onDelete(this.getPath(path)).reply((config) => {
-      let deleteResposne = controller[action](this.getParams(path, config))
-      return [200, deleteResposne]
+      let response = controller[action](this.getParams(path, config))
+      return [200, response]
     })
   }
   getParams (path, config) {
