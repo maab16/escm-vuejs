@@ -69,7 +69,7 @@
                   </b-form-select>
                 </b-form-group>
               </div>
-              <div class="col-md-6 col-lg-3">
+              <div class="col-md-6 col-lg-3" v-if="!isBuyingLead">
                 <b-form-group id="input-group-5" label="Buying Lead :" label-for="input-5">
                   <b-form-select
                     :searchable="false"

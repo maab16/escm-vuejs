@@ -1,3 +1,4 @@
+// import { times } from 'lodash'
 import { mapActions, mapGetters } from 'vuex'
 import cartsummary from '../cart-summary/cartSummary.vue'
 
@@ -17,6 +18,10 @@ export default {
     }
   },
   created () {
+    if (this.carts.length < 1) {
+      this.$router.push({name: 'cart'})
+    }
+    this.countDown = process.env.COUNTDOWN
     this.countDownTimer()
     this.setDeliveryAddresses()
     if (this.addresses.length > 0) {
@@ -26,6 +31,8 @@ export default {
   },
   computed: {
     ...mapGetters('cart', [
+      'carts',
+      'requests',
       'addresses',
       'deliveryAddress'
     ]),
@@ -41,7 +48,8 @@ export default {
   methods: {
     ...mapActions('cart', [
       'setDeliveryAddresses',
-      'setDeliveryAddress'
+      'setDeliveryAddress',
+      'setCartItems'
     ]),
     /**
      * timer Countdown
@@ -51,7 +59,7 @@ export default {
         setTimeout(() => {
           this.countDown -= 1
           this.countDownTimer()
-        }, 1500)
+        }, 1000)
       }
       if (this.countDown === 0 && this.currentRouteName === 'checkout') {
         this.timeOut()
@@ -110,8 +118,15 @@ export default {
     showModal () {
       this.$refs['my-modal'].show()
       setTimeout(() => {
+        this.setCartItems()
+        this.carts.forEach(cart => {
+          if (cart.availability === 0) {
+            this.$router.push('/cart')
+          }
+        })
+        this.countDown = process.env.COUNTDOWN
+        this.countDownTimer()
         this.$refs['my-modal'].hide()
-        this.$router.push('/cart')
       }, 2000)
     }
   }

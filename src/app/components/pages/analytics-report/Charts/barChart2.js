@@ -16,7 +16,7 @@ export default {
       labels: labels,
       datasets: [
         {
-          label: 'Completed',
+          label: 'Unavailable',
           backgroundColor: '#00205C',
           data: data
         }

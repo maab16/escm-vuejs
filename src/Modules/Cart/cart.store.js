@@ -2,6 +2,7 @@
 
 import * as types from './mutation-types'
 import Address from '@/Modules/User/address.model'
+import ProductService from '@/Modules/Product/product.service'
 
 const stateData = {
   carts: localStorage.getItem('carts') != null
@@ -97,6 +98,37 @@ const actions = {
     }
     commit(types.SET_CART_REQUEST, requests)
   },
+  async setCartItems ({commit}) {
+    let carts = localStorage.getItem('carts') != null
+      ? JSON.parse(localStorage.getItem('carts'))
+      : []
+    let total = localStorage.getItem('total_carts') != null
+      ? JSON.parse(localStorage.getItem('total_carts'))
+      : 0
+    let requests = localStorage.getItem('request_carts') != null
+      ? JSON.parse(localStorage.getItem('request_carts'))
+      : []
+
+    carts = await ProductService.checkAvailabilty(carts)
+
+    commit(types.SET_CART, carts)
+    commit(types.SET_TOTAL_CART, total)
+    commit(types.SET_CART_REQUEST, requests)
+  },
+  changeCartToRequest ({commit}, item) {
+    let carts = localStorage.getItem('carts') != null
+      ? JSON.parse(localStorage.getItem('carts'))
+      : []
+    let requests = localStorage.getItem('request_carts') != null
+      ? JSON.parse(localStorage.getItem('request_carts'))
+      : []
+
+    carts = carts.filter(cart => cart.id !== item.id)
+    requests.push(item)
+
+    commit(types.SET_CART, carts)
+    commit(types.SET_CART_REQUEST, requests)
+  },
   setCheckList ({commit}, payload) {
     commit(types.SET_CHECK_LIST, payload)
   },
@@ -156,10 +188,10 @@ const actions = {
   setDeliveryAddress ({commit}, address) {
     commit(types.SET_DELIVERY_ADDRESS, address)
   },
-  updateCart ({commit}, item) {
-    let carts = state.carts
+  updateCart ({commit, getters}, item) {
+    let carts = getters.carts
     carts = carts.map(cart => {
-      if (cart.id == item.id) {
+      if (cart.id === item.id) {
         return item
       }
       return cart
@@ -168,14 +200,14 @@ const actions = {
   }
 }
 
-const getters = {
+const gettersData = {
   carts: state => state.carts,
   requests: state => state.requests != null ? state.requests : [],
   checkList: state => state.checkList,
   requestList: state => state.requestList,
   total: state => state.total,
   addresses: state => state.addresses,
-  deliveryAddress: state => state.deliveryAddress,
+  deliveryAddress: state => state.deliveryAddress
   // isCartItem: (state) => (payload) => {
   //   let carts = state.carts
   //   carts = carts.filter(cart => {
@@ -200,5 +232,5 @@ export default {
   state: stateData,
   mutations,
   actions,
-  getters
+  getters: gettersData
 }

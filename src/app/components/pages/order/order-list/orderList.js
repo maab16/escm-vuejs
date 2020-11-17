@@ -1,10 +1,11 @@
 import { directive as onClickaway } from 'vue-clickaway'
 import { ValidationObserver, ValidationProvider } from 'vee-validate'
 import orderMixin from '@/mixins/order'
+import orderFields from '@/mixins/table-fields'
 
 export default {
   middleware: 'auth',
-  mixins: [orderMixin],
+  mixins: [orderMixin, orderFields],
   components: {
     ValidationObserver,
     ValidationProvider
@@ -45,56 +46,6 @@ export default {
         {
           key: 'address',
           label: 'Delivery Location',
-          sortable: true
-        },
-        {
-          key: 'created_at',
-          label: 'Order Date',
-          sortable: true
-        },
-        {
-          key: 'status',
-          label: 'Status',
-          sortable: true
-        },
-        {
-          key: 'meta',
-          label: ''
-        },
-        {
-          key: 'actions',
-          label: 'Actions'
-        }
-      ],
-      fielast_namelds: [
-        {
-          key: 'id',
-          label: 'Order No.',
-          sortable: true
-        },
-        {
-          key: 'user',
-          label: 'Customer',
-          sortable: true
-        },
-        {
-          key: 'manager',
-          label: 'Project Manager',
-          sortable: true
-        },
-        {
-          key: 'buying_lead',
-          label: 'Buying Lead',
-          sortable: true
-        },
-        // {
-        //   key: 'Delivery',
-        //   label: 'Delivery Location',
-        //   sortable: true
-        // },
-        {
-          key: 'internal_buyer',
-          label: 'Internal Buyer',
           sortable: true
         },
         {
@@ -214,7 +165,15 @@ export default {
   },
   mounted () {
     this.fetchOrderList(this.getOptions())
-    console.log(this.orders)
+    if (!this.isCustomer) {
+      this.fields = this.fields.filter(field => field.key !== 'address')
+    }
+    if (this.isBuyingLead) {
+      this.fields = this.fields.filter(field => field.key !== 'buying_lead')
+    }
+    if (this.isManager) {
+      this.fields = this.fields.filter(field => field.key !== 'manager')
+    }
   },
   methods: {
     orderDate (date) {
@@ -248,6 +207,7 @@ export default {
       this.internalBuyer = null
       this.from = null
       this.to = null
+      this.filter = ''
       this.setAdvancedOptions(this.orders, {})
       this.fetchOrderList(this.getOptions())
       this.$nextTick(() => {})
@@ -267,11 +227,11 @@ export default {
       this.filterSection = false
     },
     orderDetail (res) {
-      console.log(res)
       this.$router.push({name: 'order-detail', params: { id: res }})
     },
     getOptions () {
       return {
+        'filter': this.filter,
         'address': this.address,
         'customer': this.customer,
         'projectManager': this.projectManager,

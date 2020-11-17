@@ -1,4 +1,3 @@
-import { mapActions, mapGetters } from 'vuex'
 import orderDetails from '@/mixins/order-details'
 
 export default {
@@ -103,61 +102,21 @@ export default {
       }
       ],
 
-      RequestList: [{
-        id: 1,
-        products: {
-          badge: '4782-25-6',
-          pname: 'Calcium Carbonate',
-          pcode: 'CaCO',
-          pure: '95%',
-          package: '5 gm'
-        },
-        orderserv: [{
-          id: 1,
-          Quality: 3,
-          Supplier: 'Combiblocks',
-          Unitprice: '$ 06.00',
-          Unitinr: '423.00',
-          Subprice: '$ 24',
-          Subinr: '3456.00',
-          status: 'Requested SLS to order',
-          Pr: 1000054321,
-          po: 1000012345
-        },
-        {
-          id: 2,
-          Quality: 2,
-          Supplier: 'Combiblocks',
-          Unitprice: '$ 06.00',
-          Unitinr: '423.00',
-          Subprice: '$ 24',
-          Subinr: '3456.00',
-          status: 'Requested SLS to order',
-          Pr: 1000054321,
-          po: 1000012345
-        }
-        ]
-      }],
+      RequestList: [],
       projectManagers: ['Arun', 'Varun'],
       buyingLeads: ['Rakesh', 'Anil'],
       internalBuyers: ['Sudhkar Reddy', 'Anil'],
       updateorderDetail: false,
-      recentDelted: true,
+      recentDelted: false,
+      products: [],
+      requests: [],
       selectcheck: [],
-      ordercheck: true,
-      message: ''
+      ordercheck: false,
+      message: '',
+      slNo: 1
     }
   },
   computed: {
-    ...mapGetters('role', [
-      'roles'
-    ]),
-    ...mapGetters('order', [
-      'order'
-    ]),
-    ...mapGetters('product', [
-      'currency'
-    ]),
     total: function () {
       let amount = 0
       this.order.products.forEach(product => {
@@ -166,28 +125,42 @@ export default {
       return amount
     }
   },
-  mounted () {
+  async mounted () {
+    await this.retrieveOrderList()
+    // this.RequestList = this.order.products
     this.ordersList = this.order.products
-    console.log(this.order)
+    this.requests = this.order.requests.map(request => {
+      request.isSelect = true
+      request.slNo = this.slNo
+      this.slNo++
+      return request
+    })
+    this.products = this.order.products.map(product => {
+      product.isSelect = true
+      product.slNo = this.slNo
+      this.slNo++
+      return product
+    })
+
+    this.checkAccess()
+
+    // this.selectcheck = this.products + this.requests
   },
-  created () {
-    this.retrieveOrderList()
-    this.RequestList = this.order.products
-    this.selectcheck = this.orderDetails
-  },
+  created () {},
   methods: {
-    ...mapActions('role', [
-      'fetchRoles'
-    ]),
-    ...mapActions('order', [
-      'fetchOrderDetails',
-      'updateOrderDeatils',
-      'updateOrder',
-      'updateOrderHistory'
-    ]),
-    ...mapActions('comment', [
-      'saveComment'
-    ]),
+    getTotal (currency) {
+      let total = 0
+
+      this.order.products.map(product => {
+        total += product[currency] * product.pivot.qty
+      })
+
+      this.order.requests.map(request => {
+        total += request[currency] * request.qty
+      })
+
+      return total.toFixed(2)
+    },
     showProjectManagerModal () {
       this.$refs['project-manager-modal'].show()
     },
@@ -196,48 +169,9 @@ export default {
       this.RequestList.push(item)
       this.$refs['cart-update-modal'].show()
     },
-    async changeOrderDetails (order, type, modal) {
-      let message = ''
-      if (type === 'internal-buyer') {
-        this.internalBuyers.forEach(buyer => {
-          if (buyer.value == order.internal_buyer_id) {
-            message = 'Internal Buyer assigned: <strong>' + buyer.text + '</strong>'
-          }
-        })
-      }
-      if (type === 'project-manager') {
-        this.projectManagers.forEach(manager => {
-          if (manager.value == order.manager_id) {
-            message = 'Project Manager assigned: <strong>' + manager.text + '</strong>'
-          }
-        })
-      }
-      if (type === 'buying-lead') {
-        this.buyingLeads.forEach(lead => {
-          if (lead.value == order.buying_lead_id) {
-            message = 'Buying Lead assigned: <strong>' + lead.text + '</strong>'
-          }
-        })
-      }
-      await this.updateOrderHistory({
-        order,
-        message: message
-      })
-      await this.updateOrder(order)
-      this.retrieveOrderList()
-      this.$refs[modal].hide()
-    },
-    async updateDeatils () {
-      await this.updateOrderDeatils(this.RequestList)
-      await this.fetchOrderDetails(this.$route.params.id)
-    },
-    async comment () {
-      await this.saveComment({
-        order_id: this.order.id,
-        message: this.message
-      })
-      this.message = ''
-      await this.fetchOrderDetails(this.$route.params.id)
+    showAllUpdateModal () {
+      this.RequestList = this.selectcheck
+      this.$refs['cart-update-modal'].show()
     },
     /**
      * order All select
@@ -246,8 +180,11 @@ export default {
       this.ordercheck = !this.ordercheck
       this.selectcheck = []
       if (this.ordercheck) { // Check all
-        for (var data in this.orderDetails) {
-          this.selectcheck.push(this.orderDetails[data])
+        for (var data in this.products) {
+          this.selectcheck.push(this.products[data])
+        }
+        for (var request in this.requests) {
+          this.selectcheck.push(this.requests[request])
         }
         this.recentDelted = true
       } else {
@@ -258,17 +195,94 @@ export default {
      * order single select
      */
     updateCheckall () {
-      console.log(this.selectcheck)
-      console.log(this.orderDetails)
-      if (this.selectcheck.length === this.orderDetails.length) {
+      if (this.selectcheck.length === (this.products.length + this.requests.length)) {
         this.ordercheck = true
       } else {
         this.ordercheck = false
         this.recentDelted = true
       }
     },
-    addPR () {
-      console.log('Adding PR')
+    updateInr (item) {
+      this.order.requests = this.order.requests.map(request => {
+        if (request.id === item.id) {
+          item.lines = item.lines.map(line => {
+            line.inr = (line.qty * (75.71 * line[this.order.currency])).toFixed(2)
+            return line
+          })
+          return item
+        }
+        return request
+      })
+    },
+    addProductLine (item) {
+      if (item.pivot) {
+        this.order.products = this.order.products.map(product => {
+          if (product.id === item.id) {
+            product.lines.push({
+              order_id: this.order.id,
+              product_id: product.id,
+              qty: 1,
+              supplier: product.supplier,
+              usd: product.usd,
+              inr: product.inr,
+              prno: '',
+              pono: ''
+            })
+          }
+          return product
+        })
+      } else {
+        this.order.requests = this.order.requests.map(product => {
+          if (product.id === item.id) {
+            product.lines.push({
+              order_id: this.order.id,
+              product_id: product.id,
+              qty: 1,
+              supplier: product.supplier,
+              usd: product.usd,
+              inr: product.inr,
+              prno: '',
+              pono: ''
+            })
+          }
+          return product
+        })
+      }
+      this.checkQtyAvailability(item)
+    },
+    removeProductLine (item, index) {
+      item.lines.splice(index, 1)
+      this.checkQtyAvailability(item)
+    },
+    checkQtyAvailability (item) {
+      let count = 0
+      item.invalidQty = false
+      if (!item.lines) {
+        this.order.products = this.order.products.map(product => {
+          if (product.id === item.id) {
+            if (item.pivot.qty > product.pivot.qty) {
+              item.invalidQty = true
+            }
+            return item
+          }
+          return product
+        })
+      } else {
+        this.order.requests = this.order.requests.map(request => {
+          if (request.id === item.id) {
+            item.lines = item.lines.map(line => {
+              line.inr = (line.qty * (75.71 * line[this.order.currency])).toFixed(2)
+              count += parseInt(line.qty)
+              return line
+            })
+            if (count > item.qty) {
+              item.invalidQty = true
+            }
+            return item
+          }
+          return request
+        })
+      }
     },
     /**
      * Add pr number
@@ -286,62 +300,10 @@ export default {
       })
     },
     /**
-     * submit add pr number
-     **/
-    submitProduct () {
-      const data = {
-        RequestList: this.RequestList
-      }
-      console.log(JSON.stringify(data))
-      this.updateOrder()
-    },
-    /**
      * hidedetails Card
      **/
     hideRequestCard () {
       this.hideCard = !this.hideCard
-    },
-    /**
-     * updateOrder Details
-     **/
-    async retrieveOrderList () {
-      await this.fetchRoles()
-      await this.fetchOrderDetails(this.id)
-      this.roles.forEach(role => {
-        if (role.slug === 'project-manager') {
-          this.projectManagers = []
-          role.users.map(user => {
-            this.projectManagers.push({
-              value: user.id,
-              text: user.fname + ' ' + user.lname
-            })
-          })
-        } else if (role.slug === 'buying-lead') {
-          this.buyingLeads = []
-          role.users.map(user => {
-            this.buyingLeads.push({
-              value: user.id,
-              text: user.fname + ' ' + user.lname
-            })
-          })
-        } else if (role.slug === 'internal-buyer') {
-          this.internalBuyers = []
-          role.users.map(user => {
-            this.internalBuyers.push({
-              value: user.id,
-              text: user.fname + ' ' + user.lname
-            })
-          })
-        }
-      })
-      console.log(this.order)
-      // OrderDataService.getOrdersAll()
-      //   .then(response => {
-      //     this.ordersList = response.data
-      //   })
-      //   .catch(e => {
-      //     console.log(e)
-      //   })
     },
     printWindow: function () {
       window.print()
@@ -351,6 +313,17 @@ export default {
       this.statusProject = this.selected
     },
     openModal (ref) {
+      this.$refs[ref].show()
+    },
+    openBuyerModal (ref) {
+      this.setInternalBuyers(this.order.buying_lead_id)
+      this.internalBuyers = []
+      this.buyers.map(lead => {
+        this.internalBuyers.push({
+          value: lead.buyer.id,
+          text: lead.buyer.fname + ' ' + lead.buyer.lname
+        })
+      })
       this.$refs[ref].show()
     },
     hideModal (ref) {

@@ -1,6 +1,7 @@
 import analytic from '@/mixins/analytic'
 
 export default {
+  middleware: ['auth', 'analytic'],
   mixins: [analytic],
   data () {
     return {
@@ -8,8 +9,9 @@ export default {
     }
   },
   async mounted () {
-    console.log(this.type)
+    // console.log(this.type)
     this.fetchOrders()
+    // console.log(this.orders)
     // Set the initial number of orders
     this.totalRows = this.orders.length
   }

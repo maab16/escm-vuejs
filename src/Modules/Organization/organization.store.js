@@ -1,27 +1,19 @@
 /* eslint no-shadow: ["error", { "allow": ["state"] }] */
+// import * as types from './mutation-types'
+import OrganizationService from '@/Modules/Organization/organization.service'
 
-import Organization from '@/Modules/Organization/organization.model'
-
-const stateData = {
-  organizations: null
-}
+const stateData = {}
 
 const mutations = {}
 
 const actions = {
-  async setOrganization ({ commit, payload }, organization) {
-    console.log(organization)
+  async verifyOrganization ({commit}, email) {
+    let organization = await OrganizationService.verifyOrganization(email)
+    return organization
   }
 }
 
-const getters = {
-  getOrganization: (state) => (organization) => {
-    return Organization.query().where('email', organization.email).first()
-  },
-  getOrganizationIdByEmail: (state) => (email) => {
-    return Organization.query().where('email', email).first().id
-  }
-}
+const getters = {}
 
 export default {
   state: stateData,

@@ -53,7 +53,7 @@
                   </b-form-select>
                 </b-form-group>
               </div>
-              <div class="col-md-6 col-lg-3">
+              <div class="col-md-6 col-lg-3" v-if="!isManager">
                 <b-form-group id="input-group-4" label="Project Manager :" label-for="input-4">
                   <b-form-select
                     :searchable="false"
@@ -69,7 +69,7 @@
                   </b-form-select>
                 </b-form-group>
               </div>
-              <div class="col-md-6 col-lg-3">
+              <div class="col-md-6 col-lg-3" v-if="!isBuyingLead">
                 <b-form-group id="input-group-5" label="Buying Lead :" label-for="input-5">
                   <b-form-select
                     :searchable="false"
@@ -186,15 +186,12 @@
                 </div>
               </template>
               <template v-slot:cell(order_id)="data">
-                <a
-                  class="d-none d-lg-block d-md-block d-xl-block"
-                  :href="'/order/order-detail/' + data.value"
-                >{{ data.value }}</a>
+                <router-link class="d-none d-lg-block d-md-block d-xl-block" :to="'/order/order-detail/' + data.value">{{data.value}}</router-link>
               </template>
-              <template v-slot:cell(created_at)="data">
+              <template v-slot:cell(created_at)="row">
                 <div class="d-none d-lg-block d-md-block d-xl-block">
                   <div class="status-icons d-flex justify-content-between">
-                    <p>{{ format(data.value, 'MMM DD, YYYY') }}</p>
+                    <p>{{ format(row.item.order.created_at, 'MMM DD, YYYY') }}</p>
                     <div class="text-right">
                       <b-dropdown
                         size="sm"
@@ -209,7 +206,7 @@
                           <em class="sls-icons sls-24 order-details"></em>
                         </template>
                         <b-nav-item>
-                          <router-link class="dropdown-item" to="/order/order-detail/1000123456716">View Details</router-link>
+                          <router-link class="dropdown-item" :to="'/order/order-detail/' + row.item.order.id">View Details</router-link>
                         </b-nav-item>
                       </b-dropdown>
                     </div>

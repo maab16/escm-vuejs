@@ -20,7 +20,7 @@
               Orders
               <span class="active-border"></span>
             </b-nav-item>
-            <b-nav-item to="/request-product">
+            <b-nav-item to="/request-product" v-if="!isCustomer">
               Requested Products
               <span class="active-border"></span>
             </b-nav-item>

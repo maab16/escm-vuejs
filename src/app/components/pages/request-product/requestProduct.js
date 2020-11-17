@@ -1,29 +1,29 @@
-import {
-  directive as onClickaway
-} from 'vue-clickaway'
-import {
-  ValidationObserver,
-  ValidationProvider
-} from 'vee-validate'
-import requestFields from '@/mixins/request-table-fields'
-import { mapActions, mapGetters } from 'vuex'
+import { directive as onClickaway } from 'vue-clickaway'
+import { ValidationObserver, ValidationProvider } from 'vee-validate'
+import requestFields from '@/mixins/request-fields'
+import requestMixin from '@/mixins/request-details'
+
 export default {
-  middleware: 'auth',
-  extends: requestFields,
+  middleware: ['auth', 'internal'],
+  mixins: [requestFields, requestMixin],
   components: {
     ValidationObserver,
     ValidationProvider
   },
   data () {
     return {
-      form: {
-        Customer: null,
-        Pmanager: null,
-        Buying: null,
-        Internal: null,
-        from: '',
-        to: ''
-      },
+      address: null,
+      customer: null,
+      projectManager: null,
+      buyingLead: null,
+      internalBuyer: null,
+      from: '',
+      to: '',
+      addresses: [],
+      customers: [],
+      projectManagers: [],
+      internalBuyers: [],
+      buyingLeads: [],
       showDecadeNav: false,
       hideHeader: true,
       filterSection: false,
@@ -40,11 +40,69 @@ export default {
       bgSuccess: false,
       bgprimary: false,
       countlist: [],
-      Customer: ['Dr.reddy’s', 'Cipla', 'Hetro Labs'],
-      Pmanager: ['Rakesh A', 'Arun Kumar'],
-      Buying: ['Sudhakar Reddy', 'varun', 'ashok'],
-      Internal: ['sudhakar Reddy', 'arjun'],
-      orders: []
+      orders: [],
+      type: 'sls',
+      fields: [{
+        key: 'cas',
+        label: 'CAS No.',
+        sortable: true
+      },
+      {
+        key: 'description',
+        label: 'Product Name',
+        sortable: true
+      },
+      {
+        key: 'qty',
+        label: 'Quantity',
+        sortable: true
+      },
+      {
+        key: 'customer',
+        label: 'Customer',
+        sortable: true
+      },
+      {
+        key: 'user',
+        label: 'Requested By',
+        sortable: true
+      },
+      {
+        key: 'buying_lead',
+        label: 'Buying Lead',
+        sortable: true
+      },
+      {
+        key: 'manager',
+        label: 'Project Manager',
+        sortable: true
+      },
+      {
+        key: 'internal_buyer',
+        label: 'Internal Buyer',
+        sortable: true
+      },
+      {
+        key: 'order_id',
+        label: 'Related Order ID.',
+        sortable: true
+      },
+      {
+        key: 'delivery_at',
+        label: 'Delivery Date',
+        sortable: true
+      },
+      {
+        key: 'created_at',
+        label: 'Order Date',
+        sortable: true
+      },
+      {
+        key: 'actions',
+        label: 'Actions',
+        sortable: false
+      }
+      ]
     }
   },
   /**
@@ -54,14 +112,11 @@ export default {
     onClickaway: onClickaway
   },
   mounted () {
-    this.setRequestOrders()
+    this.setRequestOrders(this.getOptions())
     // Set the initial number of orders
     // console.log(this.orders)
   },
   computed: {
-    ...mapGetters('request', {
-      requestOrders: 'orders'
-    }),
     statusConnt () {
       return this.count(this.order)
     },
@@ -81,22 +136,6 @@ export default {
     }
   },
   methods: {
-    ...mapActions('request', [
-      'setOrders'
-    ]),
-    async setRequestOrders () {
-      let result = await this.setOrders()
-      if (result) {
-        this.orders = this.requestOrders.map(orderDetail => {
-          orderDetail.actions = {
-            id: orderDetail.order_id
-          }
-          return orderDetail
-        })
-
-        this.totalRows = this.orders.length
-      }
-    },
     /**
      *click away method
      */
@@ -107,6 +146,7 @@ export default {
      *click away filtersearch
      */
     filterSearch () {
+      console.log('filter search')
       this.filterSection = !this.filterSection
     },
     count (array) {
@@ -131,19 +171,35 @@ export default {
      */
     onReset (evt) {
       evt.preventDefault()
-      this.form.Customer = null
-      this.form.Pmanager = null
-      this.form.Buying = null
-      this.form.Internal = null
-      this.form.from = null
-      this.form.to = null
+      this.address = null
+      this.customer = null
+      this.projectManager = null
+      this.buyingLead = null
+      this.internalBuyer = null
+      this.from = ''
+      this.to = ''
+      this.filter = ''
+      this.setRequestOrders(this.getOptions())
       this.$nextTick(() => {})
+    },
+    getOptions () {
+      return {
+        'filter': this.filter,
+        'address': this.address,
+        'customer': this.customer,
+        'projectManager': this.projectManager,
+        'buyingLead': this.buyingLead,
+        'internalBuyer': this.internalBuyer,
+        'from': this.from,
+        'to': this.to
+      }
     },
     /**
      *filter Submit
      */
     onSubmit (evt) {
       evt.preventDefault()
+      this.setRequestOrders(this.getOptions())
       // this.filterOrderlist()
       console.log(JSON.stringify(this.form))
       // this.filterSection = false

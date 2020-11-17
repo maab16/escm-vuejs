@@ -175,10 +175,12 @@
                 <!-- otp verify template -->
                 <template v-if="verify">
                   <div class="account-info">
+
                     <h3 class="mb-3 fw-500">Verify</h3>
-                    <p>
-                      Enter the verification code sent to</p>
-                      <p class="pb-25">{{ accountemail }}</p>
+                    <p>Enter the verification code sent to</p>
+                    <p class="pb-25">{{ accountemail }}</p>
+                    <p v-if="getOTP">Your OTP is <strong>{{getOTP}}</strong></p>
+
                     <v-otp-input
                       ref="otpInput"
                       input-classes="otp-input"
@@ -219,7 +221,7 @@
                       @dismissed="dismissCountDown=0"
                       @dismiss-count-down="countDownChanged"
                       class=" text-center small rounded otp-alert"
-                    >An OTP has been sent to your mail. {{ accountemail }}
+                    >An OTP has been sent to your mail. {{ accountemail }} <span v-if="getOTP">Your OTP is <strong>{{getOTP}}</strong></span>
                     </b-alert>
                     <div class="back-login">
                     <a href="javascript:void(0)" @click="backlogin()" class="text-primary">Back to login</a>

@@ -4,6 +4,7 @@ export default {
   computed: {
     ...mapGetters('user', [
       'user',
+      'token',
       'check',
       'hasRole',
       'isAdmin',
@@ -12,9 +13,6 @@ export default {
       'isBuyingLead',
       'isInternalBuyer',
       'isCustomer',
-      'getUserByEmail',
-      'getUserByEmailWithOrganuization',
-      'getMaxId',
       'getOTP',
       'getNameFromEmail',
       'getDomainFromEmail'
@@ -25,9 +23,10 @@ export default {
       'sendOTP',
       'createNewUser',
       'loginInternalUser',
+      'verifyUser',
+      'verifyCustomerUser',
       'logout',
-      'setDefaultOTP',
-      'setUserData'
+      'setDefaultOTP'
     ])
   }
 }

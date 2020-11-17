@@ -8,7 +8,7 @@ import axios from 'axios'
 import { extend } from 'vee-validate'
 import * as rules from 'vee-validate/dist/rules'
 import { messages } from 'vee-validate/dist/locale/en.json'
-import BootstrapVue, { BTable } from 'bootstrap-vue'
+import BootstrapVue, { BTable, BootstrapVueIcons } from 'bootstrap-vue'
 import OtpInput from '@bachdgvn/vue-otp-input'
 import vSelect from 'vue-select'
 import mixin from './mixin'
@@ -17,6 +17,8 @@ Vue.component('v-select', vSelect)
 Vue.component('v-otp-input', OtpInput)
 Vue.config.productionTip = false
 Vue.use(BootstrapVue, BTable)
+Vue.use(BootstrapVueIcons)
+window.toastr = require('toastr')
 
 new Vue({
   router,
